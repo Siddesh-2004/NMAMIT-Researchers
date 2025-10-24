@@ -1,10 +1,12 @@
 import React from 'react'
-
+import Login from './pages/Login.jsx'
+import NavBar from './components/NavBar.jsx'
 function App() {
   return (
-    <div>
-      <h1 className='bg-amber-800'>Hello World</h1>
-    </div>
+    <>
+      <NavBar />
+       <Login /> 
+    </>
   )
 }
 
