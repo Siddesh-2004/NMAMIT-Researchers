@@ -96,7 +96,7 @@ export default function Reviewers() {
           <ReviewerInfoCard />
           
           <div className="text-center text-gray-500 py-8">
-            Import your ReviewerInfoCard component and replace the commented lines above
+            
           </div>
         </div>
       </div>
