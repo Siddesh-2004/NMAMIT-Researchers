@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, FileText, Users, UserCheck, Home } from 'lucide-react';
+import { Menu, X, FileText, Users, UserCheck, Home, Trash2Icon, BookCheck, BookCopy } from 'lucide-react';
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,12 +9,14 @@ export default function NavBar() {
   };
 
   const navItems = [
-    { name: 'Add Papers', icon: FileText, href: '#add-papers' },
-    { name: 'Delete Papers', icon: FileText, href: '#delete-papers' },
-    { name: 'Add Authors', icon: Users, href: '#add-authors' },
-    { name: 'Delete Authors', icon: Users, href: '#delete-authors' },
-    { name: 'Add Reviewers', icon: UserCheck, href: '#add-reDeleteers' },
-    { name: 'Delete Reviewers', icon: UserCheck, href: '#delete-reDeleteers' },
+    { name: 'Home', icon: Home, href: '#Home' },
+    { name: 'In-Revision', icon: FileText, href: '#in-revision' },
+    { name: 'In-Review', icon: FileText, href: '#in-review' },
+    { name: 'Submitted', icon: FileText, href: '#submitted' },
+    {name:'Topics',icon:BookCopy,href:'#topics'},
+    { name: 'Add Reviewers', icon: UserCheck, href: '#add-reviewers' },
+    { name: 'Delete Reviewers', icon: UserCheck, href: '#delete-reviewers' },
+    { name: 'Delete Papers', icon: Trash2Icon, href: '#delete-papers' },
   ];
 
   return (
