@@ -1,5 +1,15 @@
-import { useState } from 'react';
-import { Menu, X, FileText, Users, UserCheck, Home } from 'lucide-react';
+import { useState } from "react";
+import {
+  Menu,
+  X,
+  FileText,
+  Users,
+  UserCheck,
+  Home,
+  Trash2Icon,
+  BookCheck,
+  BookCopy,
+} from "lucide-react";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,12 +19,13 @@ export default function NavBar() {
   };
 
   const navItems = [
-    { name: 'Add Papers', icon: FileText, href: '#add-papers' },
-    { name: 'Delete Papers', icon: FileText, href: '#delete-papers' },
-    { name: 'Add Authors', icon: Users, href: '#add-authors' },
-    { name: 'Delete Authors', icon: Users, href: '#delete-authors' },
-    { name: 'Add Reviewers', icon: UserCheck, href: '#add-reDeleteers' },
-    { name: 'Delete Reviewers', icon: UserCheck, href: '#delete-reDeleteers' },
+    { name: "Home", icon: Home, href: "#Home" },
+    { name: "In-Revision", icon: FileText, href: "#in-revision" },
+    { name: "In-Review", icon: FileText, href: "#in-review" },
+    { name: "Topics", icon: BookCopy, href: "#topics" },
+    { name: "Add Reviewers", icon: UserCheck, href: "#add-reviewers" },
+    { name: "Delete Reviewers", icon: UserCheck, href: "#delete-reviewers" },
+    { name: "Delete Papers", icon: Trash2Icon, href: "#delete-papers" },
   ];
 
   return (
@@ -22,7 +33,9 @@ export default function NavBar() {
       {/* Desktop Sidebar - Always visible on lg+ screens */}
       <aside className="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 lg:w-64 lg:bg-gradient-to-b lg:from-slate-900 lg:to-slate-800 lg:shadow-2xl lg:z-40">
         <div className="flex items-center justify-center h-20 border-b border-slate-700/50">
-          <h1 className="text-2xl font-bold text-white tracking-tight">NMAMIT Researchers</h1>
+          <h1 className="text-2xl font-bold text-white tracking-tight">
+            NMAMIT Researchers
+          </h1>
         </div>
         <nav className="flex-1 overflow-y-auto py-6 px-4">
           <ul className="space-y-2">
@@ -40,7 +53,9 @@ export default function NavBar() {
           </ul>
         </nav>
         <div className="p-4 border-t border-slate-700/50">
-          <p className="text-xs text-slate-400 text-center">© 2025 NMAMIT Researchers</p>
+          <p className="text-xs text-slate-400 text-center">
+            © 2025 NMAMIT Researchers
+          </p>
         </div>
       </aside>
 
@@ -67,7 +82,7 @@ export default function NavBar() {
       {/* Mobile Drawer */}
       <aside
         className={`lg:hidden fixed top-16 left-0 bottom-0 w-72 bg-gradient-to-b from-slate-900 to-slate-800 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <nav className="overflow-y-auto h-full py-6 px-4">
