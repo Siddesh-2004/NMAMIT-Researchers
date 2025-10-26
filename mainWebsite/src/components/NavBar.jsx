@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, FileText, Users, UserCheck, Home } from 'lucide-react';
+import { Menu, X, FileText, Users,Info, UserCheck, Home, BookCopy } from 'lucide-react';
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -7,14 +7,17 @@ export default function NavBar() {
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
-
+  
+ 
   const navItems = [
-    { name: 'Accepted', icon: FileText, href: '#add-papers' },
+    { name: "Home", icon: Home, href: "#Home" },
     { name: 'In-Revision', icon: FileText, href: '#delete-papers' },
     { name: 'In-Review', icon: FileText, href: '#add-authors' },
+    { name: 'Topics', icon: BookCopy, href: '#topics' },
     { name: 'Submit Papers', icon: FileText, href: '#delete-authors' },
     { name: 'Reviewers', icon: UserCheck, href: '#add-reviewers' },
     { name: 'Authors', icon: UserCheck, href: '#delete-authors' },
+    { name: 'Contact-Us', icon: Info, href: '#contact-us' },
   ];
 
   return (
