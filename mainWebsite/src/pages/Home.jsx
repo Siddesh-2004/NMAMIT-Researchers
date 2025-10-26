@@ -104,9 +104,9 @@ function Home() {
 
       {/* Research Cards */}
       <div className='space-y-4 px-6 mt-6'>
-        <ResearchCard />
-        <ResearchCard />
-        <ResearchCard />
+        <ResearchCard status="Accepted"  />
+        <ResearchCard status="Accepted"  />
+        <ResearchCard status="Accepted" />
       </div>
     </div>
   );

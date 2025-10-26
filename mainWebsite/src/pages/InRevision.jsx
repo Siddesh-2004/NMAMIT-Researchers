@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
 import { Search, Filter } from 'lucide-react';
-import InRevisionCard from '../components/InRevisionCard';
-
+import ResearchCard from '../components/ResearchCard';
 export default function InRevision() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-0">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <h1
-          className="text-3xl md:text-4xl font-bold mb-8"
-          style={{ color: '#001F3F' }}
-        >
-          Papers In Revision
-        </h1>
+       
 
         {/* Search and Filter Bar */}
         <div className="mb-8 flex flex-col sm:flex-row gap-3">
@@ -93,10 +86,10 @@ export default function InRevision() {
 
         {/* Papers Grid */}
         <div className="space-y-6">
-          <InRevisionCard />
-          <InRevisionCard />
-          <InRevisionCard />
-          
+          <ResearchCard status="In-Revision" />
+          <ResearchCard status="In-Revision" />
+          <ResearchCard status="In-Revision" />
+
           <div className="text-center text-gray-500 py-8">
             
           </div>
