@@ -5,6 +5,8 @@ import Home from './pages/Home.jsx'
 import InRevision from './pages/InRevision.jsx'
 import InReview from './pages/InReview.jsx'
 import Topic from './pages/Topic.jsx'
+import AddReviewer from './pages/AddReviewer.jsx'
+import DeleteContent from './pages/DeleteReviewer.jsx'
 function App() {
   return (
     <>
@@ -13,7 +15,9 @@ function App() {
        {/* <Home /> */}
        {/* <InRevision/> */}
        {/* <InReview/> */}
-       <Topic/>
+       {/* <Topic/> */}
+       {/* <AddReviewer/> */}
+       <DeleteContent/>
     </>
   )
 }
