@@ -12,7 +12,6 @@ export default function NavBar() {
     { name: 'Home', icon: Home, href: '#Home' },
     { name: 'In-Revision', icon: FileText, href: '#in-revision' },
     { name: 'In-Review', icon: FileText, href: '#in-review' },
-    { name: 'Submitted', icon: FileText, href: '#submitted' },
     {name:'Topics',icon:BookCopy,href:'#topics'},
     { name: 'Add Reviewers', icon: UserCheck, href: '#add-reviewers' },
     { name: 'Delete Reviewers', icon: UserCheck, href: '#delete-reviewers' },

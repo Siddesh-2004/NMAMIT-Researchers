@@ -1,20 +1,11 @@
-import React, { useState } from 'react';
-import Analytics from '../components/AnalyticsCard';
+import React from 'react'
+import { useState } from 'react';
 import ResearchCard from '../components/ResearchCard';
-
-function Home() {
+function InRevision() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(false);
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
-      {/* Analytics Section */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 mt-5'>
-        <Analytics title='Total Researchers' number='100'/>
-        <Analytics title='Total Papers' number='25'/>
-        <Analytics title='Topics' number='10'/>
-        <Analytics title='Attended Conferences' number='5'/>
-      </div>
-
       {/* Search Bar and Filter */}
       <div className='px-6 mt-6'>
         <div className='flex gap-3 items-center'>
@@ -101,16 +92,15 @@ function Home() {
           </div>
         )}
       </div>
-
       {/* Research Cards */}
       <div className='space-y-4 px-6 mt-6'>
-        <ResearchCard />
-        <ResearchCard />
-        <ResearchCard />
+        <ResearchCard status='In Revision' score={null} />
+        <ResearchCard status='In Revision' score={null}/>
+        <ResearchCard status='In Revision' score={null}/>
+        <ResearchCard status='In Revision' score={null}/>
       </div>
     </div>
-  );
+  )
 }
 
-export default Home;
-
+export default InRevision
