@@ -4,12 +4,14 @@ import Login from './pages/Login'
 import NavBar from './components/NavBar'
 
 import Authors from './pages/Authors'
-import TopicCard from './components/TopicCard'
 import ContactUs from './pages/ContactUs'
 
 import Topic from './pages/Topic'
 import Home from './pages/Home'
 import InRevision from './pages/InRevision'
+import SubmitPaper from './pages/SubmitPaper'
+import Reviewers from './pages/Reviewers'
+import Profile from './pages/Profile'
 
 
 
@@ -19,12 +21,14 @@ function App() {
     <NavBar/>
    {/* <Home/> */}
     {/* <Authors/> */}
+    {/* <SubmitPaper/> */}
     {/* <Reviewers/> */}
-    <InRevision/>
+    {/* <InRevision/> */}
       {/* <Landing/> */}
       {/* <Login/> */}
       {/* <Topic /> */}
       {/* <ContactUs /> */}
+      <Profile/>
       
       
     </div>
