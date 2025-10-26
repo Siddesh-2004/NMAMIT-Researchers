@@ -94,10 +94,10 @@ function InRevision() {
       </div>
       {/* Research Cards */}
       <div className='space-y-4 px-6 mt-6'>
-        <ResearchCard status='In Revision' score={null} />
-        <ResearchCard status='In Revision' score={null}/>
-        <ResearchCard status='In Revision' score={null}/>
-        <ResearchCard status='In Revision' score={null}/>
+        <ResearchCard status='In-Revision' score={null} />
+        <ResearchCard status='In-Revision' score={null}/>
+        <ResearchCard status='In-Revision' score={null}/>
+        <ResearchCard status='In-Revision' score={null}/>
       </div>
     </div>
   )

@@ -12,12 +12,12 @@ function App() {
     <>
       <NavBar />
        {/* <Login />  */}
-       {/* <Home /> */}
+       <Home />
        {/* <InRevision/> */}
        {/* <InReview/> */}
        {/* <Topic/> */}
        {/* <AddReviewer/> */}
-       <DeleteContent/>
+       {/* <DeleteContent/> */}
     </>
   )
 }

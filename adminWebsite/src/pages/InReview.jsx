@@ -94,10 +94,10 @@ function InReview() {
       </div>
       {/* Research Cards */}
       <div className='space-y-4 px-6 mt-6'>
-        <ResearchCard status='In Review' score={null} />
-        <ResearchCard status='In Review' score={null}/>
-        <ResearchCard status='In Review' score={null}/>
-        <ResearchCard status='In Review' score={null}/>
+        <ResearchCard status='In-Review' score={null} />
+        <ResearchCard status='In-Review' score={null}/>
+        <ResearchCard status='In-Review' score={null}/>
+        <ResearchCard status='In-Review' score={null}/>
       </div>
     </div>
   )

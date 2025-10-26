@@ -24,8 +24,7 @@ export default function NavBar() {
     { name: "In-Review", icon: FileText, href: "#in-review" },
     { name: "Topics", icon: BookCopy, href: "#topics" },
     { name: "Add Reviewers", icon: UserCheck, href: "#add-reviewers" },
-    { name: "Delete Reviewers", icon: UserCheck, href: "#delete-reviewers" },
-    { name: "Delete Papers", icon: Trash2Icon, href: "#delete-papers" },
+    { name: "Delete Content", icon: Trash2Icon, href: "#delete-papers" },
   ];
 
   return (
