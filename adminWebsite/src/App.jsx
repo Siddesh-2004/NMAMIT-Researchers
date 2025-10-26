@@ -4,6 +4,7 @@ import NavBar from './components/NavBar.jsx'
 import Home from './pages/Home.jsx'
 import InRevision from './pages/InRevision.jsx'
 import InReview from './pages/InReview.jsx'
+import Topic from './pages/Topic.jsx'
 function App() {
   return (
     <>
@@ -11,7 +12,8 @@ function App() {
        {/* <Login />  */}
        {/* <Home /> */}
        {/* <InRevision/> */}
-       <InReview/>
+       {/* <InReview/> */}
+       <Topic/>
     </>
   )
 }
