@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Search, Filter } from 'lucide-react';
-import AuthorCard from '../components/AuthorCard';
+import InRevisionCard from '../components/InRevisionCard';
 
-export default function Authors() {
+export default function InRevision() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -14,7 +14,7 @@ export default function Authors() {
           className="text-3xl md:text-4xl font-bold mb-8"
           style={{ color: '#001F3F' }}
         >
-          Authors
+          Papers In Revision
         </h1>
 
         {/* Search and Filter Bar */}
@@ -27,7 +27,7 @@ export default function Authors() {
             />
             <input
               type="text"
-              placeholder="Search authors by name, email, or university..."
+              placeholder="Search papers by title, author name, or university..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -56,48 +56,50 @@ export default function Authors() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Branch/Department
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">All</option>
-                  <option value="cs">Computer Science</option>
-                  <option value="it">Information Technology</option>
-                  <option value="ds">Data Science</option>
-                  <option value="ai">Artificial Intelligence</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Min Papers Published
+                  Reviewer Number
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., 10"
+                  placeholder="e.g., REV-2024-015"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  University
+                  Current Status
                 </label>
                 <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                   <option value="">All</option>
-                  <option value="abc">ABC University</option>
-                  <option value="tech">Tech Institute</option>
-                  <option value="science">Science College</option>
+                  <option value="in-revision">In Revision</option>
+                  <option value="awaiting-resubmission">Awaiting Resubmission</option>
+                  <option value="pending-changes">Pending Changes</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Department
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">All</option>
+                  <option value="cs">Computer Science</option>
+                  <option value="ee">Electrical Engineering</option>
+                  <option value="me">Mechanical Engineering</option>
+                  <option value="bio">Biotechnology</option>
                 </select>
               </div>
             </div>
           </div>
         )}
 
-        {/* Authors Grid */}
-        <div className="space-y-8">
-          <AuthorCard />
-          <AuthorCard />
-          <AuthorCard />
+        {/* Papers Grid */}
+        <div className="space-y-6">
+          <InRevisionCard />
+          <InRevisionCard />
+          <InRevisionCard />
           
-        
+          <div className="text-center text-gray-500 py-8">
+            
+          </div>
         </div>
       </div>
     </div>

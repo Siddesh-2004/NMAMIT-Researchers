@@ -1,54 +1,41 @@
 import React from 'react';
 
-export default function ReviewerInfoCard({ reviewer }) {
-  // Default reviewer data for demonstration
-  const defaultReviewer = {
-    name: "Dr. Priya Sharma",
-    reviewerNumber: "REV-2024-001",
+export default function AuthorCard({ author }) {
+  // Default author data for demonstration
+  const defaultAuthor = {
+    name: "Dr. Riya Sharma",
+    authorNumber: "AUTH-2024-001",
+    email: "riya.sharma@univ.edu",
     phone: "+91 98765 43210",
-    email: "priya.sharma@nmamit.in",
-    averageScore: 4.7,
-    papersReviewed: 23,
-    qualification: "Ph.D. in Computer Science"
+    university: "ABC University",
+    branch: "Computer Science",
+    papersPublished: 8
   };
   
-  const reviewerData = reviewer || defaultReviewer;
+  const authorData = author || defaultAuthor;
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 max-w-2xl mx-auto">
-      {/* Reviewer Name */}
+      {/* Author Name */}
       <h2
         className="text-2xl md:text-3xl font-bold mb-6"
         style={{ color: '#001F3F' }}
       >
-        {reviewerData.name}
+        {authorData.name}
       </h2>
 
-      {/* Reviewer Details Grid */}
+      {/* Author Details Grid */}
       <div className="space-y-4">
-        {/* Reviewer Number */}
+        {/* Author Number */}
         <div className="flex flex-col sm:flex-row sm:items-center">
           <span
             className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
             style={{ color: '#001F3F' }}
           >
-            Reviewer Number:
+            Author Number:
           </span>
           <span className="text-gray-700 text-sm md:text-base">
-            {reviewerData.reviewerNumber}
-          </span>
-        </div>
-
-        {/* Phone Number */}
-        <div className="flex flex-col sm:flex-row sm:items-center">
-          <span
-            className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
-            style={{ color: '#001F3F' }}
-          >
-            Phone Number:
-          </span>
-          <span className="text-gray-700 text-sm md:text-base">
-            {reviewerData.phone}
+            {authorData.authorNumber}
           </span>
         </div>
 
@@ -61,20 +48,46 @@ export default function ReviewerInfoCard({ reviewer }) {
             Email:
           </span>
           <span className="text-gray-700 text-sm md:text-base break-all">
-            {reviewerData.email}
+            {authorData.email}
           </span>
         </div>
 
-        {/* Qualification */}
+        {/* Phone Number */}
         <div className="flex flex-col sm:flex-row sm:items-center">
           <span
             className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
             style={{ color: '#001F3F' }}
           >
-            Qualification:
+            Phone Number:
           </span>
           <span className="text-gray-700 text-sm md:text-base">
-            {reviewerData.qualification}
+            {authorData.phone}
+          </span>
+        </div>
+
+        {/* University */}
+        <div className="flex flex-col sm:flex-row sm:items-center">
+          <span
+            className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
+            style={{ color: '#001F3F' }}
+          >
+            University:
+          </span>
+          <span className="text-gray-700 text-sm md:text-base">
+            {authorData.university}
+          </span>
+        </div>
+
+        {/* Branch/Department */}
+        <div className="flex flex-col sm:flex-row sm:items-center">
+          <span
+            className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
+            style={{ color: '#001F3F' }}
+          >
+            Branch/Department:
+          </span>
+          <span className="text-gray-700 text-sm md:text-base">
+            {authorData.branch}
           </span>
         </div>
 
@@ -83,38 +96,19 @@ export default function ReviewerInfoCard({ reviewer }) {
 
         {/* Statistics Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-          {/* Average Score */}
+          {/* Papers Published */}
           <div className="flex flex-col">
             <span
               className="font-semibold text-sm md:text-base mb-1"
               style={{ color: '#001F3F' }}
             >
-              Average Score
-            </span>
-            <div className="flex items-center">
-              <span
-                className="text-2xl md:text-3xl font-bold"
-                style={{ color: '#001F3F' }}
-              >
-                {reviewerData.averageScore}
-              </span>
-              <span className="text-gray-500 text-sm ml-1">/5.0</span>
-            </div>
-          </div>
-
-          {/* Papers Reviewed */}
-          <div className="flex flex-col">
-            <span
-              className="font-semibold text-sm md:text-base mb-1"
-              style={{ color: '#001F3F' }}
-            >
-              Papers Reviewed
+              Papers Published
             </span>
             <span
               className="text-2xl md:text-3xl font-bold"
               style={{ color: '#001F3F' }}
             >
-              {reviewerData.papersReviewed}
+              {authorData.papersPublished}
             </span>
           </div>
         </div>
