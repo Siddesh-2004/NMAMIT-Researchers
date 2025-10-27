@@ -6,12 +6,9 @@ import {
   Users,
   UserCheck,
   Home,
-  Trash2Icon,
-  BookCheck,
-  BookCopy,
+  Trash2Icon
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
