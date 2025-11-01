@@ -6,11 +6,9 @@ import {
   Users,
   UserCheck,
   Home,
-  Trash2Icon,
-  BookCheck,
-  BookCopy,
+  Trash2Icon
 } from "lucide-react";
-
+import { NavLink } from "react-router-dom";
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -19,12 +17,11 @@ export default function NavBar() {
   };
 
   const navItems = [
-    { name: "Home", icon: Home, href: "#Home" },
-    { name: "In-Revision", icon: FileText, href: "#in-revision" },
-    { name: "In-Review", icon: FileText, href: "#in-review" },
-    { name: "Topics", icon: BookCopy, href: "#topics" },
-    { name: "Add Reviewers", icon: UserCheck, href: "#add-reviewers" },
-    { name: "Delete Content", icon: Trash2Icon, href: "#delete-papers" },
+    { name: "Home", icon: Home, href: "" },
+    { name: "In-Revision", icon: FileText, href: "InRevision" },
+    { name: "In-Review", icon: FileText, href: "InReview" },
+    { name: "Add Reviewers", icon: UserCheck, href: "AddReviewer" },
+    { name: "Delete Content", icon: Trash2Icon, href: "DeleteContent" },
   ];
 
   return (
@@ -40,13 +37,15 @@ export default function NavBar() {
           <ul className="space-y-2">
             {navItems.map((item) => (
               <li key={item.name}>
-                <a
-                  href={item.href}
-                  className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 group"
+                <NavLink
+                  to={item.href}
+                  className={({ isActive }) =>(
+                    `flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 group ${isActive ? "bg-slate-700/50" : ""}`
+                  )}
                 >
                   <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
                   <span className="font-medium">{item.name}</span>
-                </a>
+                </NavLink>
               </li>
             ))}
           </ul>
