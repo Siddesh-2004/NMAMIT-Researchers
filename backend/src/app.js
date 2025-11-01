@@ -19,6 +19,37 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+
+
+//import admin routes
+import adminRoute from "./routes/admin.route.js";
+
+app.use("/api/v1/admin",adminRoute);
+
+
+//import user routes
+
+import userRoute from "./routes/user.route.js"
+
+app.use("/api/v1/user",userRoute);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default app;
 
 

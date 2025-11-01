@@ -8,17 +8,17 @@ const COOKIE_OPTIONS = {
     path: '/'
 };
 const loginAdmin = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
+  const { userName, password } = req.body;
+  if (!userName || !password) {
     throw new ApiError(400, "Username and password are required");
   }
   if (
-    username != process.env.ADMIN_USERNAME ||
+    userName != process.env.ADMIN_USERNAME ||
     password != process.env.ADMIN_PASSWORD
   ) {
-    throw new ApiError(401, "Invalid username or password");
+    throw new ApiError(401, "Invalid userName or password");
   }
-  const accessToken = jwt.sign({ username }, process.env.ACCESS_TOKEN_SECRET, {
+  const accessToken = jwt.sign({ userName }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "1h",
   });
   if (!accessToken) {
@@ -27,7 +27,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
   return res
         .cookie("accessToken", accessToken, COOKIE_OPTIONS)
         .status(200)
-        .json(new ApiResponse(username, "Login successful", 200));
+        .json(new ApiResponse(userName, "Login successful", 200));
 });
 const logoutAdmin = asyncHandler(async (req, res) => {
     console.log("cookies before logging out",req.cookies)
@@ -45,11 +45,11 @@ const verifyJwtAdmin=asyncHandler(async(req,res)=>{
             throw new ApiError(401,"Please Login")
         }
         const decodedToken=jwt.verify(accessToken,process.env.ACCESS_TOKEN_SECRET)
-        if(decodedToken.username!=process.env.ADMIN_USERNAME){
-            console.log(decodedToken.username);
+        if(decodedToken.userName!=process.env.ADMIN_USERNAME){
+            console.log(decodedToken.userName);
             throw new ApiError(400,"Invalid AccessToken");
         }
-        res.status(200).json(new ApiResponse({},"Auto Login Successful",200));
+        res.status(200).json(new ApiResponse(decodedToken.userName,"Auto Login Successful",200));
 
 
     }catch(err){
