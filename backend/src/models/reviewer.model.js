@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 const reviewerSchema = new mongoose.Schema({
-    reviwerName:{
+    reviewerName:{
         type:String,
         required:true,
         lowercase:true,
@@ -12,6 +12,10 @@ const reviewerSchema = new mongoose.Schema({
         lowercase:true,
         trim:true,
     },
+    paperIds:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Paper',
+    }],
 });
 const ReviewerModel = mongoose.model('Reviewer', reviewerSchema);
 export default ReviewerModel;

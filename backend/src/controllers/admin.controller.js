@@ -1,6 +1,6 @@
 import asyncHandler from "../utils/asynchandler.js";
 import jwt from "jsonwebtoken";
-import { ApiError } from "../utils/apiErrors.js";
+import ApiError  from "../utils/apiErrors.js";
 import ApiResponse from "../utils/apiResponse.js";
 const COOKIE_OPTIONS = {
     httpOnly: true,
