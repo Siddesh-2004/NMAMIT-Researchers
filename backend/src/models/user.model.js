@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
     },
     phoneNumber:{
-        type:number,
+        type:Number,
         required:true,
         unique:true,
         length:10,
@@ -31,7 +31,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        lowercase: true,
     },
     affiliation:{
         type: String,
