@@ -48,7 +48,7 @@ const paperSchema = new mongoose.Schema({
     enum: ["Accepted", "InRevision", "InReview"],
     default: "InReview",
   },
- authorsIds:[{
+ authors:[{
     type:mongoose.Schema.Types.ObjectId,
     ref:'Team',
     required:true,
@@ -61,6 +61,11 @@ reviwerId:{
     type:String,
     trim:true,
     default:"Not Reviewed"
+  },
+  pdfUrl:{
+    type:String,
+    trim:true,
+    required:true,
   }
 });
 const PaperModel = mongoose.model("Paper", paperSchema);
