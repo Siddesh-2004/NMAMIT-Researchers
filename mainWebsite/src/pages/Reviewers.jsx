@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Filter } from 'lucide-react';
-import ReviewerInfoCard from '../components/ReviewersCard';
+import ReviewerInfoCard from "../components/ReviewerInfoCard";
 export default function Reviewers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
