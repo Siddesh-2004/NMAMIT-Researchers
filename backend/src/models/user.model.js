@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
     },
     phoneNumber:{
-        type:number,
+        type:Number,
         required:true,
         unique:true,
         length:10,

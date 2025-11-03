@@ -45,3 +45,4 @@ const signUpUser = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(newUser, "Signup successful", 200));
 });
+export { signUpUser };f
