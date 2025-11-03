@@ -2,11 +2,10 @@ import React from 'react'
 import Landing from './pages/LandingPage'
 import Login from './pages/Login'
 import NavBar from './components/NavBar'
-import Reviewers from './pages/Reviewers'
+
 import Authors from './pages/Authors'
-import TopicCard from './components/TopicCard'
 import ContactUs from './pages/ContactUs'
-import InRevision from './pages/InRevision'
+
 import Topic from './pages/Topic'
 import Home from './pages/Home'
 import { useState } from 'react'
@@ -16,6 +15,8 @@ import Layout from './Layout'
 import InReview from './pages/InReview'
 import SubmitPaper from './pages/SubmitPaper'
 import Profile from './pages/Profile' 
+import InRevision from './pages/InRevision'
+import Reviewers from './pages/Reviewers' 
 
 
 // function App() {
@@ -36,7 +37,7 @@ import Profile from './pages/Profile'
 // }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Layout />}>
