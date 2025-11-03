@@ -99,4 +99,3 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 export { signUpUser, loginUser, logoutUser };
 
-export { signUpUser };f
