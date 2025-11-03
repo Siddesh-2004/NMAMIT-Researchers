@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Menu, X, FileText, Users,Info, UserCheck, Home, BookCopy } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +12,7 @@ export default function NavBar() {
   
  
   const navItems = [
-    { name: "me", icon: Home, href: "" },
+    { name: "Home", icon: Home, href: "" },
     { name: 'In-Revision', icon: FileText, href: 'InRevision' },
     { name: 'In-Review', icon: FileText, href: 'InReview' },
     { name: 'Topics', icon: BookCopy, href: 'Topics' },

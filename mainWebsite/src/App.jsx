@@ -15,6 +15,8 @@ import Layout from './Layout'
 import InReview from './pages/InReview'
 import SubmitPaper from './pages/SubmitPaper'
 import Profile from './pages/Profile' 
+import InRevision from './pages/InRevision'
+import Reviewers from './pages/Reviewers' 
 
 
 // function App() {
@@ -35,7 +37,7 @@ import Profile from './pages/Profile'
 // }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Layout />}>
