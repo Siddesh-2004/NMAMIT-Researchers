@@ -1,5 +1,5 @@
 import asyncHandler from "../utils/asynchandler.js";
-import { ApiError } from "../utils/apiErrors.js";
+import  ApiError  from "../utils/apiErrors.js";
 import ApiResponse from "../utils/apiResponse.js";
 import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";

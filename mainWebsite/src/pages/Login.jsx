@@ -1,19 +1,36 @@
 import { useState } from 'react';
-
-export default function Login() {
-  const [isLogin, setIsLogin] = useState(true);
+import axios from '../api/axios.config.js';
+import toast from 'react-hot-toast';
+export default function Login({setIsLoggedIn}) {
+  const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [university, setUniversity] = useState('');
   const [phone, setPhone] = useState('');
 
-  const handleSubmit = () => {
-    if (isLogin) {
-      console.log('Login submitted:', { email, password });
-    } else {
-      console.log('Sign up submitted:', { username, university, email, password, phone });
-    }
+  const handleSubmit = async (e) => {
+    let path, requestData={};
+    e.preventDefault();
+   if(isLogin){
+     path='/user/login';
+     requestData={email,password};
+   }else{
+     path='/user/signUp';
+     requestData={userName:username,affiliation:university,email,password,phoneNumber:phone,fullName:"siddehshukla"};
+   }
+   try{
+     const response=await axios.post(path,requestData,{withCredentials:true});
+     console.log(response);
+     if(response.data.success){
+       setIsLoggedIn(true);
+       toast.success(response.data.message);
+     }
+   }
+   catch(err){
+     console.log(err);
+     toast.error(err.message);
+   }
   };
 
   const toggleForm = () => {

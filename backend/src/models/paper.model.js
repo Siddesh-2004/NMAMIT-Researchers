@@ -10,14 +10,13 @@ const paperSchema = new mongoose.Schema({
   },
   conference: {
     type: String,
-    required: true,
     lowercase: true,
     trim: true,
     default:"Not Assigned",
   },
   year: {
     type: Number,
-    required: true,
+   
   },
 
   abstract: {
@@ -35,12 +34,12 @@ const paperSchema = new mongoose.Schema({
   },
   score: {
     type: Number,
-    required: true,
+  
     default: 0,
   },
   revisionCount: {
     type: Number,
-    required: true,
+   
     default: 0,
   },
   acceptanceStatus: {
@@ -57,7 +56,11 @@ const paperSchema = new mongoose.Schema({
 reviwerId:{
     type:mongoose.Schema.Types.ObjectId,
     ref:'Reviewer',
-    required:true,
+  },
+  review:{
+    type:String,
+    trim:true,
+    default:"Not Reviewed"
   }
 });
 const PaperModel = mongoose.model("Paper", paperSchema);

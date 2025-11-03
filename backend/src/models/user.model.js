@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         maxlength: 100,
     },
+    paperIds:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Paper',
+    }],
 });
 const UserModel = mongoose.model('User', userSchema);
 export default UserModel;
