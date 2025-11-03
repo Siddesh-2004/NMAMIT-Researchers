@@ -1,11 +1,25 @@
 import { useState } from 'react';
 import { Lock, User } from 'lucide-react';
+import axios from '../api/axios.config.js';
+import toast from 'react-hot-toast';
 
-export default function ResearcherLogin() {
+export default function ResearcherLogin({setIsLoggedIn}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try{
+      const response=await axios.post('/admin/login',{userName : username,password},{withCredentials:true});
+      console.log(response);
+      if(response.data.success){
+        setIsLoggedIn(true);
+        toast.success("Logged in successfully");
+      }
+    }catch(err){
+      console.log(err);
+      toast.error("Invalid username or password");
+    }
    
   };
 
