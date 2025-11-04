@@ -37,8 +37,9 @@ app.use("/api/v1/user",userRoute);
 import reviewRoute from "./routes/review.route.js";
 app.use("/api/v1/reviewer",reviewRoute);
 
-
-
+//import paper routes
+import paperRoute from "./routes/paper.route.js";
+app.use("/api/v1/paper",paperRoute);
 
 
 

@@ -1,5 +1,11 @@
 import mongoose from "mongoose";
 const paperSchema = new mongoose.Schema({
+  topic:{
+    type:String,
+    required:true,
+    trim:true,
+    lowercase:true,
+  },
   title: {
     type: String,
     required: true,
@@ -48,7 +54,7 @@ const paperSchema = new mongoose.Schema({
     enum: ["Accepted", "InRevision", "InReview"],
     default: "InReview",
   },
- authorsIds:[{
+ authors:[{
     type:mongoose.Schema.Types.ObjectId,
     ref:'Team',
     required:true,
@@ -61,7 +67,12 @@ reviwerId:{
     type:String,
     trim:true,
     default:"Not Reviewed"
+  },
+  pdfUrl:{
+    type:String,
+    trim:true,
+    required:true,
   }
 });
-const PaperModel = mongoose.model("Paper", paperSchema);
+const PaperModel = mongoose.model("Papers", paperSchema);
 export default PaperModel;

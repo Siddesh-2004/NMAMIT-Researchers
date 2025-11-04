@@ -4,11 +4,15 @@ import ApiError from "../utils/apiErrors.js";
 import ApiResponse from "../utils/apiResponse.js";
 
 const addReviewer =asyncHandler(async(req,res)=>{
-    const {reviewerName,qualification} = req.body;
-    if(!reviewerName || !qualification){
+    const {reviewerName,qualification,email,phoneNumber} = req.body;
+    if(!reviewerName || !qualification|| !email || !phoneNumber){
         throw new ApiError(400,"Invalid request body");
     }
-    const newReviewer = await ReviewerModel.create({reviewerName,qualification});
+    const reviewer = await ReviewerModel.findOne({$or:[{reviewerName},{email},{phoneNumber}]});
+    if(reviewer){
+        throw new ApiError(400,"Reviewer already exists");
+    }
+    const newReviewer = await ReviewerModel.create({reviewerName,qualification,email,phoneNumber});
     if(!newReviewer){
         throw new ApiError(500,"Failed to create reviewer");
     }
