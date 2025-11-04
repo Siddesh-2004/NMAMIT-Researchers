@@ -95,7 +95,7 @@ export default function SubmitPaper() {
   const abstractWordCount = abstract.split(' ').filter(word => word).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-0">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
       <div className="max-w-4xl mx-auto">
         {/* Upload Section */}
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-6">

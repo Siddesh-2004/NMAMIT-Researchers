@@ -7,16 +7,8 @@ export default function Authors() {
   const [showFilters, setShowFilters] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-0">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <h1
-          className="text-3xl md:text-4xl font-bold mb-8"
-          style={{ color: '#001F3F' }}
-        >
-          Authors
-        </h1>
-
         {/* Search and Filter Bar */}
         <div className="mb-8 flex flex-col sm:flex-row gap-3">
           {/* Search Bar */}
