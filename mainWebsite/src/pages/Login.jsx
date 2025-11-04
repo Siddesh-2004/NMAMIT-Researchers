@@ -8,6 +8,8 @@ export default function Login({setIsLoggedIn}) {
   const [username, setUsername] = useState('');
   const [university, setUniversity] = useState('');
   const [phone, setPhone] = useState('');
+  const [fullName, setFullName] = useState(''); 
+
 
   const handleSubmit = async (e) => {
     let path, requestData={};
@@ -17,7 +19,8 @@ export default function Login({setIsLoggedIn}) {
      requestData={email,password};
    }else{
      path='/user/signUp';
-     requestData={userName:username,affiliation:university,email,password,phoneNumber:phone,fullName:"siddehshukla"};
+     requestData={userName:username,affiliation:university,email,password,phoneNumber:phone,fullName: fullName};
+
    }
    try{
      const response=await axios.post(path,requestData,{withCredentials:true});
@@ -76,6 +79,24 @@ export default function Login({setIsLoggedIn}) {
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none transition-all"
                   placeholder="Enter your username"
+                />
+              </div>
+               {/* Full Name Field  */}
+              <div>
+                <label 
+                  htmlFor="fullName" 
+                  className="block text-sm font-medium mb-2 text-gray-700"
+                >
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                  placeholder="Enter your full name"
+                  required
                 />
               </div>
 

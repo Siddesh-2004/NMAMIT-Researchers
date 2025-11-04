@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from '../api/axios.config.js'; 
+import toast from 'react-hot-toast';
 
 function AddReviewer() {
   const [formData, setFormData] = useState({
@@ -18,10 +20,19 @@ function AddReviewer() {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    // Add your submission logic here
-    alert('Reviewer added successfully!');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/reviewers/add', formData, { withCredentials: true });
+      if (response.data.success) {
+        toast.success('Reviewer added successfully!');
+      } else {
+        toast.error('Failed to add reviewer.');
+      }
+    } catch (error) {
+      console.error('Error adding reviewer:', error);
+      toast.error('An error occurred while adding the reviewer.');
+    }
   };
 
   return (
