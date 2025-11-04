@@ -20,7 +20,7 @@ const signUpUser = asyncHandler(async (req, res) => {
     !password ||
     !affiliation
   ) {
-    throw new ApiError(400, "Invalid request body");
+    throw new ApiError(400, "All fields are required");
   }
   const user = await UserModel.findOne({
     $or: [
@@ -30,7 +30,7 @@ const signUpUser = asyncHandler(async (req, res) => {
     ],
   });
   if (user) {
-    throw new ApiError(400, "Username already exists");
+    throw new ApiError(400, "User already exists with same details");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await UserModel.create({
