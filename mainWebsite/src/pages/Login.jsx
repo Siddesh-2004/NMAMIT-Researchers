@@ -1,49 +1,74 @@
-import { useState } from 'react';
-import axios from '../api/axios.config.js';
-import toast from 'react-hot-toast';
-export default function Login({setIsLoggedIn}) {
-  const [isLogin, setIsLogin] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [university, setUniversity] = useState('');
-  const [phone, setPhone] = useState('');
-  const [fullName, setFullName] = useState(''); 
+import { useState, useEffect } from "react";
+import axios from "../api/axios.config.js";
+import toast from "react-hot-toast";
 
+export default function Login({ setIsLoggedIn }) {
+  const [isLogin, setIsLogin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [university, setUniversity] = useState("");
+  const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState("");
+
+  useEffect(() => {
+    const verification = async () => {
+      try {
+        const response = await axios.get("/user/verifyJwt",{withCredentials:true});
+        console.log(response);
+        if (response.data.success) {
+          setIsLoggedIn(true);
+          toast.success(response.data.message);
+        }
+      } catch (err) {
+        console.log(err);
+
+      }
+    };
+    verification();
+  });
 
   const handleSubmit = async (e) => {
-    let path, requestData={};
+    let path,
+      requestData = {};
     e.preventDefault();
-   if(isLogin){
-     path='/user/login';
-     requestData={email,password};
-   }else{
-     path='/user/signUp';
-     requestData={userName:username,affiliation:university,email,password,phoneNumber:phone,fullName: fullName};
-
-   }
-   try{
-     const response=await axios.post(path,requestData,{withCredentials:true});
-     console.log(response);
-     if(response.data.success){
-       setIsLoggedIn(true);
-       toast.success(response.data.message);
-     }
-   }
-   catch(err){
-     console.log(err);
-     toast.error(err.response.data.message);
-   }
+    if (isLogin) {
+      path = "/user/login";
+      requestData = { email, password };
+    } else {
+      path = "/user/signUp";
+      requestData = {
+        userName: username,
+        affiliation: university,
+        email,
+        password,
+        phoneNumber: phone,
+        fullName: fullName,
+      };
+    }
+    try {
+      const response = await axios.post(path, requestData, {
+        withCredentials: true,
+      });
+      console.log(response);
+      if (response.data.success) {
+        setIsLoggedIn(true);
+        toast.success(response.data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response.data.message);
+    }
   };
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
     // Clear form fields when switching
-    setEmail('');
-    setPassword('');
-    setUsername('');
-    setUniversity('');
-    setPhone('');
+    setEmail("");
+    setPassword("");
+    setUsername("");
+    setUniversity("");
+    setPhone("");
   };
 
   return (
@@ -51,11 +76,13 @@ export default function Login({setIsLoggedIn}) {
       {/* Login/Sign Up Card */}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 md:p-10">
         {/* Title */}
-        <h1 
+        <h1
           className="text-2xl md:text-3xl font-bold text-center mb-8"
-          style={{ color: '#001F3F' }}
+          style={{ color: "#001F3F" }}
         >
-          {isLogin ? 'Login to Nmamit Researchers' : 'Sign Up for Nmamit Researchers'}
+          {isLogin
+            ? "Login to Nmamit Researchers"
+            : "Sign Up for Nmamit Researchers"}
         </h1>
 
         {/* Form */}
@@ -65,10 +92,10 @@ export default function Login({setIsLoggedIn}) {
             <>
               {/* Username Field */}
               <div>
-                <label 
-                  htmlFor="username" 
+                <label
+                  htmlFor="username"
                   className="block text-sm font-medium mb-2"
-                  style={{ color: '#001F3F' }}
+                  style={{ color: "#001F3F" }}
                 >
                   Username
                 </label>
@@ -81,10 +108,10 @@ export default function Login({setIsLoggedIn}) {
                   placeholder="Enter your username"
                 />
               </div>
-               {/* Full Name Field  */}
+              {/* Full Name Field  */}
               <div>
-                <label 
-                  htmlFor="fullName" 
+                <label
+                  htmlFor="fullName"
                   className="block text-sm font-medium mb-2 text-gray-700"
                 >
                   Full Name
@@ -102,10 +129,10 @@ export default function Login({setIsLoggedIn}) {
 
               {/* University Name Field */}
               <div>
-                <label 
-                  htmlFor="university" 
+                <label
+                  htmlFor="university"
                   className="block text-sm font-medium mb-2"
-                  style={{ color: '#001F3F' }}
+                  style={{ color: "#001F3F" }}
                 >
                   University Name
                 </label>
@@ -123,10 +150,10 @@ export default function Login({setIsLoggedIn}) {
 
           {/* Email Field */}
           <div>
-            <label 
-              htmlFor="email" 
+            <label
+              htmlFor="email"
               className="block text-sm font-medium mb-2"
-              style={{ color: '#001F3F' }}
+              style={{ color: "#001F3F" }}
             >
               Email
             </label>
@@ -142,10 +169,10 @@ export default function Login({setIsLoggedIn}) {
 
           {/* Password Field */}
           <div>
-            <label 
-              htmlFor="password" 
+            <label
+              htmlFor="password"
               className="block text-sm font-medium mb-2"
-              style={{ color: '#001F3F' }}
+              style={{ color: "#001F3F" }}
             >
               Password
             </label>
@@ -162,10 +189,10 @@ export default function Login({setIsLoggedIn}) {
           {/* Phone Number Field (Sign Up only) */}
           {!isLogin && (
             <div>
-              <label 
-                htmlFor="phone" 
+              <label
+                htmlFor="phone"
                 className="block text-sm font-medium mb-2"
-                style={{ color: '#001F3F' }}
+                style={{ color: "#001F3F" }}
               >
                 Phone Number
               </label>
@@ -184,9 +211,9 @@ export default function Login({setIsLoggedIn}) {
           <button
             onClick={handleSubmit}
             className="w-full py-3 text-white font-semibold rounded-lg transition-all duration-200 hover:opacity-90 shadow-md hover:shadow-lg"
-            style={{ backgroundColor: '#001F3F' }}
+            style={{ backgroundColor: "#001F3F" }}
           >
-            {isLogin ? 'Login' : 'Sign Up'}
+            {isLogin ? "Login" : "Sign Up"}
           </button>
         </div>
 
@@ -194,10 +221,10 @@ export default function Login({setIsLoggedIn}) {
         <p className="text-center mt-6 text-sm text-gray-600">
           {isLogin ? (
             <>
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <button
                 className="font-semibold hover:underline"
-                style={{ color: '#001F3F' }}
+                style={{ color: "#001F3F" }}
                 onClick={toggleForm}
               >
                 Sign up
@@ -205,10 +232,10 @@ export default function Login({setIsLoggedIn}) {
             </>
           ) : (
             <>
-              Already have an account?{' '}
+              Already have an account?{" "}
               <button
                 className="font-semibold hover:underline"
-                style={{ color: '#001F3F' }}
+                style={{ color: "#001F3F" }}
                 onClick={toggleForm}
               >
                 Login

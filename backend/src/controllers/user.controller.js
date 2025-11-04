@@ -67,7 +67,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await UserModel.findOne({ email });
   console.log(user);
   if (!user) {
-    throw new ApiError(401, "Invalid userName or password");
+    throw new ApiError(401, "Invalid userNasfdsfsme or password");
   }
   const isPasswordMatched = await bcrypt.compare(password, user.password);
   console.log(isPasswordMatched);
@@ -96,6 +96,18 @@ const logoutUser = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(null, "Logout successful", 200));
 });
-
-export { signUpUser, loginUser, logoutUser };
+const verifyJwtUser=asyncHandler(async(req,res)=>{
+    console.log(req.cookies);
+    const accessToken=req.cookies?.accessToken||req.header("Authorization")?.replace("Bearer ", "");
+    if(!accessToken){
+        throw new ApiError(401,"Please Login")
+    }
+    const decodedToken=jwt.verify(accessToken,process.env.ACCESS_TOKEN_SECRET);
+    const user=await UserModel.findOne({userName:decodedToken.username});
+    if(!user){
+        throw new ApiError(401,"Invalid AccessToken");
+    }
+    res.status(200).json(new ApiResponse(user,"Auto Login Successful",200));
+});
+export { signUpUser, loginUser, logoutUser,verifyJwtUser };
 

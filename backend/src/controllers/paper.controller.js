@@ -1,4 +1,4 @@
-//add paper
+
 //change status
 //delete paper
 //asign reviewer
@@ -54,3 +54,11 @@ const addPaper = asyncHandler(async (req, res) => {
 });
 
 export { addPaper };
+
+const getInReviewPapers = asyncHandler(async (req, res) => {
+  const papers = await PaperModel.find({ status: "inReview" });
+  if (!papers) {
+    throw new ApiError(500, "Failed to get papers");
+  }
+  return res.status(200).json(new ApiResponse(papers, "Papers fetched successfully", 200));
+});
