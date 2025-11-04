@@ -74,5 +74,5 @@ reviwerId:{
     required:true,
   }
 });
-const PaperModel = mongoose.model("Paper", paperSchema);
+const PaperModel = mongoose.model("Papers", paperSchema);
 export default PaperModel;

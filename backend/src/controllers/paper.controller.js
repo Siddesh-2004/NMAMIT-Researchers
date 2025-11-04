@@ -43,7 +43,7 @@ const addPaper = asyncHandler(async (req, res) => {
   if (!newPaper) {
     throw new ApiError(500, "Failed to create paper");
   }
-  const updatedReviewer=await ReviewerModel.findByIdAndUpdate(reviewerId,{$push:{paperIds:newPaper._id}});
+  const updatedReviewer=await ReviewerModel.findByIdAndUpdate(reviewerId,{$push:{paperIds:newPaper._id}},{new:true});
 
   if(!updatedReviewer){
     throw new ApiError(500,"Failed to update reviewer");
