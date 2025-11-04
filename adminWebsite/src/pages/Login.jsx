@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Lock, User } from 'lucide-react';
 import axios from '../api/axios.config.js';
 import toast from 'react-hot-toast';
@@ -6,6 +6,22 @@ import toast from 'react-hot-toast';
 export default function ResearcherLogin({setIsLoggedIn}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const response = await axios.get('/admin/verifyJwt', { withCredentials: true });
+        if (response.data.success) {
+          setIsLoggedIn(true);
+          toast.success(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error verifying session:", error);
+      }
+    };
+
+    verifySession();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
