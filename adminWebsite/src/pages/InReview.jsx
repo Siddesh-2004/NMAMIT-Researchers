@@ -1,9 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
+import axios from '../api/axios.config';
 import ResearchCard from '../components/ResearchCard';
 function InReview() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [reviewPapers, setReviewPapers] = useState([]);
+  useEffect(()=>{
+    const getReviewPapers=async()=>{
+      try{
+        console.log("hai");
+        const response = await axios.get('/paper/getInReviewPapers');
+        setReviewPapers(response.data.data);
+        console.log(reviewPapers);
+      }catch(err){
+        console.log(err);
+      }
+    }
+    getReviewPapers()
+  });
+  console.log(reviewPapers);
+
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
       {/* Search Bar and Filter */}
@@ -93,12 +110,31 @@ function InReview() {
         )}
       </div>
       {/* Research Cards */}
-      <div className='space-y-4 px-6 mt-6'>
-        <ResearchCard status='In-Review' score={null} />
-        <ResearchCard status='In-Review' score={null}/>
-        <ResearchCard status='In-Review' score={null}/>
-        <ResearchCard status='In-Review' score={null}/>
-      </div>
+      <div className='space-y-5 mt-3'>
+
+        {
+          reviewPapers.map((paper)=>(
+            <ResearchCard
+              title={paper.title}
+              titleUrl={paper.titleUrl}
+              authors={paper.authors}
+              affiliation={paper.affiliation}
+              affiliationUrl={paper.affiliationUrl}
+              topic={paper.topic}
+              reviewer={paper.reviewer}
+              score={paper.score}
+              conference={paper.conference}
+              abstract={paper.abstract}
+              RevisionCount={paper.revisionCount}
+              status={paper.acceptanceStatus}
+              suggestions={paper.review}
+            />
+          ))
+            
+        }
+       </div>
+    
+      
     </div>
   )
 }

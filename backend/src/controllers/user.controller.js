@@ -109,5 +109,17 @@ const verifyJwtUser=asyncHandler(async(req,res)=>{
     }
     res.status(200).json(new ApiResponse(user,"Auto Login Successful",200));
 });
-export { signUpUser, loginUser, logoutUser,verifyJwtUser };
+
+const getUserByUserName=asyncHandler(async(req,res)=>{
+  const userName=req.body.userName;
+  if(!userName){
+    throw new ApiError(400,"UserName is required");
+  }
+  const user=await UserModel.findOne({userName});
+  if(!user){
+    throw new ApiError(404,"User not found");
+  }
+  return res.status(200).json(new ApiResponse(user,"User fetched successfully",200));
+});
+export { signUpUser, loginUser, logoutUser,verifyJwtUser,getUserByUserName};
 

@@ -3,16 +3,16 @@ import React, { useState } from "react";
 const ResearchCard = ({
   title = "Deep Learning Approaches for Natural Language Processing",
   titleUrl = "#",
-  authors = "John Smith, Jane Doe, Robert Johnson",
+  authors = ["John Smith, Jane Doe, Robert Johnson"],
   affiliation = "Stanford University",
   affiliationUrl = "#",
   topic = "Machine Learning",
   reviewer = "Dr. Emily Chen",
-  score = 4.5,
+  score ,
   conference = "NeurIPS 2024",
   abstract = "This paper presents novel deep learning approaches for natural language processing tasks. We introduce a new architecture that combines transformer models with attention mechanisms to achieve state-of-the-art results on multiple benchmarks. Our experiments demonstrate significant improvements over existing methods in both accuracy and computational efficiency.",
   RevisionCount = 10,
-  status = "In-Revision",
+  status = "InReview",
   suggestions = "Please improve the methodology section and add more experimental results. The literature review needs to be expanded to include recent works from 2024.",
 }) => {
   const [showAbstract, setShowAbstract] = useState(false);
@@ -50,7 +50,7 @@ const ResearchCard = ({
     setAcceptanceYear("");
     setRevisionComments("");
   };
-
+console.log(score);
   return (
     <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
       {/* Update Status Button - Only visible if status is In-Review */}
@@ -176,14 +176,14 @@ const ResearchCard = ({
       )}
 
       {/* Title and Update Status Button */}
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-ceflnter justify-between">
         <a
           href={titleUrl}
           className="text-xl font-semibold text-blue-600 hover:text-blue-800 hover:underline"
         >
           {title}
         </a>
-        {status === "In-Review" && !score && (
+        {status === "InReview" && !score && score==0&&(
           <button
             onClick={() => setShowUpdateStatus(!showUpdateStatus)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"

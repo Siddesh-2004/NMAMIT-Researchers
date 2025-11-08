@@ -9,6 +9,7 @@ const addPaper = asyncHandler(async (req, res) => {
   if (!title || !abstract || !keywords || !authors || !topic) {
     throw new ApiError(400, "All fields are required");
   }
+  console.log("hai");
   console.log(req.file);
   const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
   console.log(cloudinaryResponse);
@@ -50,13 +51,81 @@ const addPaper = asyncHandler(async (req, res) => {
 
 
 const getInReviewPapers = asyncHandler(async (req, res) => {
-  const papers = await PaperModel.find({ acceptanceStatus: "InReview" });
-  if (!papers || papers.length === 0) {
+  const papersInReview = await PaperModel.aggregate([
+  {
+    $match: {
+      acceptanceStatus: "InReview"
+    }
+  },
+  {
+    $lookup: {
+      from: "users", // MongoDB collection name (lowercase plural)
+      localField: "authors",
+      foreignField: "_id",
+      as: "authorDetails"
+    }
+  },
+  {
+    $lookup: {
+      from: "reviewers", // MongoDB collection name (lowercase plural)
+      localField: "reviwerId",
+      foreignField: "_id",
+      as: "reviewerDetails"
+    }
+  },
+  {
+    $unwind: {
+      path: "$reviewerDetails",
+      preserveNullAndEmptyArrays: true // In case some papers don't have a reviewer yet
+    }
+  },
+  {
+    $project: {
+      title: 1,
+      topic: 1,
+      conference: 1,
+      year: 1,
+      abstract: 1,
+      keywords: 1,
+      score: 1,
+      revisionCount: 1,
+      acceptanceStatus: 1,
+      review: 1,
+      pdfUrl: 1,
+      authors: {
+        $map: {
+          input: "$authorDetails",
+          as: "author",
+          in: {
+            _id: "$$author._id",
+            fullName: "$$author.fullName",
+            email: "$$author.email",
+            affiliation: "$$author.affiliation"
+          }
+        }
+      },
+      reviewer: {
+        _id: "$reviewerDetails._id",
+        reviewerName: "$reviewerDetails.reviewerName",
+        email: "$reviewerDetails.email",
+        qualification: "$reviewerDetails.qualification"
+      }
+    }
+  },
+  {
+    $sort: {
+      year: -1 // Optional: sort by year descending
+    }
+  }
+]);
+
+console.log(papersInReview);
+  if (!papersInReview || papersInReview.length === 0) {
     throw new ApiError(500, "They are no papers in review");
   }
   return res
   .status(200)
-  .json(new ApiResponse(papers, "Papers fetched successfully", 200));
+  .json(new ApiResponse(papersInReview, "Papers fetched successfully", 200));
 });
 
 const getAcceptedPapers = asyncHandler(async (req, res) => {

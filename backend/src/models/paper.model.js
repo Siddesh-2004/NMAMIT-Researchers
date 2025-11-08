@@ -56,7 +56,7 @@ const paperSchema = new mongoose.Schema({
   },
  authors:[{
     type:mongoose.Schema.Types.ObjectId,
-    ref:'Team',
+    ref:'User',
     required:true,
 }],
 reviwerId:{
