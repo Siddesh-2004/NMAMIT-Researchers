@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from "react";
 import { Upload, X, Search, FileText, Check } from 'lucide-react';
+import toast from "react-hot-toast";
+import axios from '../api/axios.config';
 
 export default function SubmitPaper() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -7,37 +9,80 @@ export default function SubmitPaper() {
   const [isDragging, setIsDragging] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAuthors, setSelectedAuthors] = useState([]);
+  const [fetchedAuthors, setFetchedAuthors] = useState([]);
+
   const [title, setTitle] = useState('');
   const [topic, setTopic] = useState('');
   const [abstract, setAbstract] = useState('');
   const [showAuthorDropdown, setShowAuthorDropdown] = useState(false);
-  
-   const [formData, setFormData] = useState({
-    photo: null,
-    name: "",
-    description: "",
-    quantity: "",
-    price: "",
-    discount: "",
-    deliveryTime: "",
+  const [finalQuery, setFinalQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    uploadedFile: null,
+    title: '',
+    topic: '',
+    abstract: '',
+    authorIds:'fsda',
+    authorId:'adfs',
+    keywords:'sad',
   });
+    useEffect(() => {
+    const searchUser = async () => {
+      // NOTE: finalQuery will only be set when the user presses Enter
+      if (finalQuery.trim() === "") {
+        setFetchedAuthors([]);
+        return;
+      }
+      try {
+        const response = await axios.post("/user/findByUserName", { userName: finalQuery });
+        console.log(response.data);
+
+        if (response.data.success) {
+          const user = response.data.data;
+          
+          const formattedUser = [{
+                 id: user._id || user.id, 
+                 name: user.fullName || user.userName, 
+                 email: user.email,
+             }];
+          const newAuthors = formattedUser.filter(
+                    (user) => !selectedAuthors.some((a) => a.id === user.id)
+                );
+                setFetchedAuthors(newAuthors);
+                // toast.success(response.data.message);
+          
+        }            
+      } catch (err) {
+        // Clear results on failure
+        setFetchedAuthors([]); 
+        if (err.response?.status === 404) {
+          toast.error("No user found with that name/email.")
+          
+        } else {
+          console.error(err);
+          toast.error("Failed to fetch user");
+        }
+      }
+    };
+  if (finalQuery.trim() !== "") {
+    searchUser();
+  }else {
+        // Clear the dropdown results immediately if the search box is emptied
+        setFetchedAuthors([]);
+  }   
+}, [finalQuery, selectedAuthors]); 
 
 
-
-  // Sample co-authors data
-  const availableAuthors = [
-    { id: 1, name: 'Dr. Priya Sharma', email: 'priya@university.edu' },
-    { id: 2, name: 'Prof. Arjun Mehta', email: 'arjun@university.edu' },
-    { id: 3, name: 'Dr. Anjali Reddy', email: 'anjali@university.edu' },
-    { id: 4, name: 'Prof. Vikram Singh', email: 'vikram@university.edu' },
-  ];
-
-  const filteredAuthors = availableAuthors.filter(
-    author =>
-      (author.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        author.email.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      !selectedAuthors.find(a => a.id === author.id)
-  );
+const handleSearchKeyPress = (e) => {
+    // Check if the pressed key is 'Enter' (key code 13 is redundant but safe)
+    if (e.key === 'Enter') {
+        e.preventDefault(); // Prevents form submission or default browser behavior
+        
+        // This is the key step: setting finalQuery triggers the useEffect hook once.
+        setFinalQuery(searchQuery); 
+        setShowAuthorDropdown(true);
+    }
+ };
 
   const handleFileUpload = (file) => {
     if (file && file.type === 'application/pdf') {
@@ -53,6 +98,8 @@ export default function SubmitPaper() {
       alert('Please upload a PDF file only.');
     }
   };
+
+
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -97,12 +144,50 @@ export default function SubmitPaper() {
     );
   };
 
-  const handleSubmit = () => {
-    if (isFormValid()) {
-      alert('Paper submitted successfully!');
-      // Handle actual submission logic here
+  const handleSubmit = async(e) => {
+     e.preventDefault();
+
+    if (!isFormValid()) {
+      toast.error("Please fill all required fields correctly before submitting.");
+      return;
     }
-  };
+    setIsSubmitting(true);
+    console.log("Submitting paper...");
+     try {
+        const data = new FormData();
+      // Handle actual submission logic here
+        data.append('paperFile', uploadedFile);
+        data.append('title', title);
+        data.append('topic', topic);
+        data.append('abstract', abstract);
+        data.append('authorId', 'currentUserId'); 
+        data.append('authorIds', 'currentUserId');
+        data.append('keywords', 'example,keywords');
+
+        const response = await axios.post('/paper/add', data, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              }
+            });
+      if (response.data.success) {
+            toast.success(response.data.message)
+
+            setFormData({
+              setUploadedFile:null,
+              title: '',
+              topic: '',
+              abstract: '',
+        
+            });
+           setIsSubmitting(flase);
+        } else {
+            toast.error(response.data.message || "Submission failed due to server error.");
+        }
+      } catch (err) {
+        console.error("Submission Error:", err);
+        toast.error(err.response?.data?.message || "An unexpected error occurred during submission.");
+    }
+   };
 
   const abstractWordCount = abstract.split(' ').filter(word => word).length;
 
@@ -195,15 +280,16 @@ export default function SubmitPaper() {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
-                setShowAuthorDropdown(true);
+                // setShowAuthorDropdown(true);
               }}
+              onKeyDown={handleSearchKeyPress}
               onFocus={() => setShowAuthorDropdown(true)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             
-            {showAuthorDropdown && searchQuery && filteredAuthors.length > 0 && (
+            {showAuthorDropdown && searchQuery && fetchedAuthors.length > 0 && (
               <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                {filteredAuthors.map(author => (
+                {fetchedAuthors.map(author => (
                   <div
                     key={author.id}
                     onClick={() => addAuthor(author)}
