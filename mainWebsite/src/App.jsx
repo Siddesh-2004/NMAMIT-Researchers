@@ -48,7 +48,7 @@ function App() {
         <Route path="SubmitPaper" element={<SubmitPaper />} />
         <Route path="Reviewers" element={<Reviewers />} />
         <Route path="Authors" element={<Authors />} />
-        <Route path="Profile" element={<Profile />} />
+        <Route path="Profile" element={<Profile setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="Contact-us" element={<ContactUs />} />
 
 

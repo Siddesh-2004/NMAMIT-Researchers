@@ -11,8 +11,9 @@ function AddReviewer() {
     averageScore: '',
     papersReviewed: ''
   });
-
-  const handleChange = (e) => {
+  
+ 
+const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -23,7 +24,8 @@ function AddReviewer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/reviewers/add', formData, { withCredentials: true });
+      console.log(formData);
+      const response = await axios.post('/reviewer/add', formData);
       if (response.data.success) {
         toast.success('Reviewer added successfully!');
       } else {
@@ -48,8 +50,8 @@ function AddReviewer() {
             </label>
             <input
               type='text'
-              name='name'
-              value={formData.name}
+              name='reviewerName'
+              value={formData.reviewerName}
               onChange={handleChange}
               placeholder='Dr. Priya Sharma'
               className='w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors'

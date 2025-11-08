@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Edit, Search, FileText, Calendar, Clock, AlertCircle, CheckCircle, XCircle, Home, FileEdit, Settings, LogOut } from 'lucide-react';
+import { Search, FileText, Calendar, Clock, AlertCircle, CheckCircle, XCircle, LogOut } from 'lucide-react';
+import axios from '../api/axios.config.js';
+import toast from 'react-hot-toast';
 
-export default function App() {
+export default function Profile({setIsLoggedIn}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
@@ -14,7 +16,7 @@ export default function App() {
     contact: '+91 98765 43210'
   };
 
-  // Research papers data (removed authors field)
+  // Research papers data
   const papers = [
     { id: 1, title: 'Machine Learning Applications in Climate Change Prediction', submissionDate: '2024-09-15', status: 'accepted' },
     { id: 2, title: 'Quantum Computing: A Comprehensive Review', submissionDate: '2024-10-01', status: 'under-review' },
@@ -59,15 +61,6 @@ export default function App() {
     return matchesSearch && matchesFilter;
   });
 
-  // Calculate statistics
-  const stats = {
-    total: papers.length,
-    accepted: papers.filter(p => p.status === 'accepted').length,
-    underReview: papers.filter(p => p.status === 'under-review').length,
-    inRevision: papers.filter(p => p.status === 'in-revision').length,
-    rejected: papers.filter(p => p.status === 'rejected').length
-  };
-
   const StatusBadge = ({ status }) => {
     const config = statusConfig[status];
     const Icon = config.icon;
@@ -79,17 +72,28 @@ export default function App() {
     );
   };
 
+  const handleLogout = async () => {
+      try {
+        const response = await axios.post("/user/logout", {}, { withCredentials: true });
+        if (response.data.success) {
+          setIsLoggedIn(false);
+          toast.success(response.data.message);
+        }
+
+        // toast.success("Logout successful");
+      } catch (error) {
+        console.error("Logout failed:", error);
+        toast.error("Logout failed");
+      }
+    } 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      
-
       {/* Main Content */}
       <div className="lg:pl-64">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Main Layout */}
           <div className="grid grid-cols-1 gap-6">
-            {/* Section 1: Profile and Stats */}
+            {/* Section 1: Profile */}
             <div className="space-y-6">
               {/* User Information Card */}
               <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
@@ -102,9 +106,10 @@ export default function App() {
                     style={{ backgroundColor: '#001F3F' }}
                     onMouseEnter={(e) => e.target.style.backgroundColor = '#003366'}
                     onMouseLeave={(e) => e.target.style.backgroundColor = '#001F3F'}
+                    onClick={handleLogout}
                   >
-                    <Edit size={16} />
-                    Edit
+                    <LogOut size={16} />
+                    Logout
                   </button>
                 </div>
 
@@ -117,35 +122,6 @@ export default function App() {
                       <p className="text-gray-900 font-medium mt-1">{value}</p>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Statistics Card */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-                <h3 className="text-lg font-bold mb-4" style={{ color: '#001F3F' }}>
-                  Submission Statistics
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Submissions</span>
-                    <span className="font-bold text-lg" style={{ color: '#001F3F' }}>{stats.total}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Accepted</span>
-                    <span className="font-bold" style={{ color: '#001F3F' }}>{stats.accepted}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Under Review</span>
-                    <span className="font-bold" style={{ color: '#001F3F' }}>{stats.underReview}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">In Revision</span>
-                    <span className="font-bold" style={{ color: '#001F3F' }}>{stats.inRevision}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Rejected</span>
-                    <span className="font-bold" style={{ color: '#001F3F' }}>{stats.rejected}</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -199,9 +175,8 @@ export default function App() {
                         {filteredPapers.map((paper, index) => (
                           <tr
                             key={paper.id}
-                            className={`border-b border-gray-200 transition-colors ${
-                              index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                            }`}
+                            className={`border-b border-gray-200 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                              }`}
                           >
                             <td className="px-4 py-4">
                               <div className="flex items-start gap-2">
