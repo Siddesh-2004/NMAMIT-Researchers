@@ -3,7 +3,7 @@ import { Search, FileText, Calendar, Clock, AlertCircle, CheckCircle, XCircle, L
 import axios from '../api/axios.config.js';
 import toast from 'react-hot-toast';
 
-export default function App() {
+export default function Profile({setIsLoggedIn}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
@@ -73,12 +73,10 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    try {
-      console.log('User logging out');
       try {
         const response = await axios.post("/user/logout", {}, { withCredentials: true });
         if (response.data.success) {
-
+          setIsLoggedIn(false);
           toast.success(response.data.message);
         }
 
@@ -87,11 +85,7 @@ export default function App() {
         console.error("Logout failed:", error);
         toast.error("Logout failed");
       }
-    } catch (error) {
-      console.error("An unexpected error occurred during logout:", error);
-      toast.error("An unexpected error occurred");
-    }
-  };
+    } 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
