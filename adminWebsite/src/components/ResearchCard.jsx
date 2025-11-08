@@ -20,17 +20,23 @@ const ResearchCard = ({
   const [showUpdateStatus, setShowUpdateStatus] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [scoreInput, setScoreInput] = useState("");
+  const [conferenceName, setConferenceName] = useState("");
+  const [acceptanceYear, setAcceptanceYear] = useState("");
   const [revisionComments, setRevisionComments] = useState("");
 
   const handleStatusSelect = (statusType) => {
     setSelectedStatus(statusType);
     setScoreInput("");
+    setConferenceName("");
+    setAcceptanceYear("");
     setRevisionComments("");
   };
 
   const handleSubmit = () => {
-    if (selectedStatus === "Accepted" && scoreInput) {
+    if (selectedStatus === "Accepted" && scoreInput && conferenceName && acceptanceYear) {
       console.log("Accepted with score:", scoreInput);
+      console.log("Conference:", conferenceName);
+      console.log("Year:", acceptanceYear);
       // Add your submit logic here
     } else if (selectedStatus === "Revision" && revisionComments) {
       console.log("Revision with comments:", revisionComments);
@@ -40,6 +46,8 @@ const ResearchCard = ({
     setShowUpdateStatus(false);
     setSelectedStatus(null);
     setScoreInput("");
+    setConferenceName("");
+    setAcceptanceYear("");
     setRevisionComments("");
   };
 
@@ -91,10 +99,35 @@ const ResearchCard = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-3"
                 placeholder="e.g., 8.5"
               />
+              
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Conference Name
+              </label>
+              <input
+                type="text"
+                value={conferenceName}
+                onChange={(e) => setConferenceName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-3"
+                placeholder="e.g., NeurIPS, ICML, CVPR"
+              />
+              
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Year of Acceptance
+              </label>
+              <input
+                type="number"
+                min="2000"
+                max="2030"
+                value={acceptanceYear}
+                onChange={(e) => setAcceptanceYear(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-3"
+                placeholder="e.g., 2024"
+              />
+              
               <div className="flex gap-3">
                 <button
                   onClick={handleSubmit}
-                  disabled={!scoreInput}
+                  disabled={!scoreInput || !conferenceName || !acceptanceYear}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   Submit
