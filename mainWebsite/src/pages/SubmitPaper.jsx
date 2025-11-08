@@ -11,6 +11,18 @@ export default function SubmitPaper() {
   const [topic, setTopic] = useState('');
   const [abstract, setAbstract] = useState('');
   const [showAuthorDropdown, setShowAuthorDropdown] = useState(false);
+  
+   const [formData, setFormData] = useState({
+    photo: null,
+    name: "",
+    description: "",
+    quantity: "",
+    price: "",
+    discount: "",
+    deliveryTime: "",
+  });
+
+
 
   // Sample co-authors data
   const availableAuthors = [
