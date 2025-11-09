@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-
+import axios from "../api/axios.config";
+import { toast } from "react-hot-toast";
 const ResearchCard = ({
+  setReload,
+  paperId,
   title = "Deep Learning Approaches for Natural Language Processing",
   titleUrl = "#",
   authors=[
@@ -40,7 +43,7 @@ const ResearchCard = ({
   const [conferenceName, setConferenceName] = useState("");
   const [acceptanceYear, setAcceptanceYear] = useState("");
   const [revisionComments, setRevisionComments] = useState("");
-
+  
   const handleStatusSelect = (statusType) => {
     setSelectedStatus(statusType);
     setScoreInput("");
@@ -49,17 +52,40 @@ const ResearchCard = ({
     setRevisionComments("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit =async(e) => {
+    e.preventDefault();
+    let data={};
     if (selectedStatus === "Accepted" && scoreInput && conferenceName && acceptanceYear) {
-      console.log("Accepted with score:", scoreInput);
-      console.log("Conference:", conferenceName);
-      console.log("Year:", acceptanceYear);
-      // Add your submit logic here
+      data={
+        "score":scoreInput,
+        "acceptanceStatus":selectedStatus,
+        "conference":conferenceName,
+        "year":acceptanceYear,
+        paperId
+      }
     } else if (selectedStatus === "Revision" && revisionComments) {
-      console.log("Revision with comments:", revisionComments);
-      // Add your submit logic here
+     if(selectedStatus==="Revision"){
+      data={
+        "paperId":paperId,
+        "reviews":revisionComments,
+        "acceptanceStatus":"InRevision",
+      }
+    }}
+    console.log("siddesh",data);
+   
+    try{
+      const response=await axios.put("/paper/updateAcceptanceStatus",data,{
+        headers:{
+          "Content-Type":"application/json"
+        }
+      });
+      console.log(response);
+      toast.success("Paper updated successfully");
+    }catch(err){
+      console.log(err);
     }
     // Reset and close
+    setReload(prev=>!prev);
     setShowUpdateStatus(false);
     setSelectedStatus(null);
     setScoreInput("");
@@ -67,7 +93,11 @@ const ResearchCard = ({
     setAcceptanceYear("");
     setRevisionComments("");
   };
-console.log(score);
+ 
+  const handleUpdateStatus=()=>{
+    setShowUpdateStatus(!showUpdateStatus);
+
+  };
   return (
     <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
       {/* Update Status Button - Only visible if status is In-Review */}
@@ -147,7 +177,7 @@ console.log(score);
                   disabled={!scoreInput || !conferenceName || !acceptanceYear}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  Submit
+                  Submit1
                 </button>
                 <button
                   onClick={() => setSelectedStatus(null)}
@@ -178,7 +208,7 @@ console.log(score);
                   disabled={!revisionComments.trim()}
                   className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  Submit
+                  Submit2
                 </button>
                 <button
                   onClick={() => setSelectedStatus(null)}
@@ -202,7 +232,7 @@ console.log(score);
         </a>
         {status === "InReview" && !score && score==0&&(
           <button
-            onClick={() => setShowUpdateStatus(!showUpdateStatus)}
+            onClick={handleUpdateStatus}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
           >
             Update Status

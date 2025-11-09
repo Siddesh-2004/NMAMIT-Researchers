@@ -6,20 +6,21 @@ function InReview() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [reviewPapers, setReviewPapers] = useState([]);
+  const [reload, setReload] = useState(false);
   useEffect(()=>{
     const getReviewPapers=async()=>{
       try{
-        console.log("hai");
+       
         const response = await axios.get('/paper/getInReviewPapers');
         setReviewPapers(response.data.data);
-        console.log(reviewPapers);
+       
       }catch(err){
         console.log(err);
       }
     }
     getReviewPapers()
-  },[]);
-  console.log(reviewPapers);
+  },[reload]);
+ 
 
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
@@ -115,6 +116,8 @@ function InReview() {
         {
           reviewPapers.map((paper)=>(
             <ResearchCard
+            setReload={setReload}
+              paperId={paper._id}
               title={paper.title}
               titleUrl={paper.pdfUrl}
               authors={paper.authors}
