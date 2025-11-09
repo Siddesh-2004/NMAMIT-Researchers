@@ -8,7 +8,7 @@ const ResearchCard = ({
   affiliationUrl = "#",
   topic = "Machine Learning",
   reviewer = "Dr. Emily Chen",
-  score = 4.5,
+  score ,
   conference = "NeurIPS 2024",
   abstract = "This paper presents novel deep learning approaches for natural language processing tasks. We introduce a new architecture that combines transformer models with attention mechanisms to achieve state-of-the-art results on multiple benchmarks. Our experiments demonstrate significant improvements over existing methods in both accuracy and computational efficiency.",
   RevisionCount = 10,

@@ -25,12 +25,13 @@ const addPaper = asyncHandler(async (req, res) => {
     { $limit: 1 },
   ]);
   const reviewerId = lowestPapersReviewer[0]._id;
- 
+  const keywordsArray = keywords.split(',');
+  console.log(keywordsArray);
   const lowestPapersReviewerId = lowestPapersReviewer[0]._id;
   const newPaper = await PaperModel.create({
     title,
     abstract,
-    keywords,
+    keywords: keywordsArray,
     authors,
     reviwerId: lowestPapersReviewerId,
     pdfUrl,
