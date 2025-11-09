@@ -404,6 +404,23 @@ const handleSearchKeyPress = (e) => {
                 )}
               </div>
             </div>
+
+            {/* keywords */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Keywords <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={keywords}
+                onChange={(e) => setKeywords(e.target.value)}
+                placeholder="Enter paper keywords"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              {keywords === '' && (
+                <p className="text-xs text-red-500 mt-1">Required field</p>
+              )}
+            </div>
           </div>
         </div>
 
