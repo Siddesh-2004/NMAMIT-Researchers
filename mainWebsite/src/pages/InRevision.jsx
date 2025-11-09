@@ -1,100 +1,140 @@
-import React, { useState } from 'react';
-import { Search, Filter } from 'lucide-react';
+import React, { useEffect } from 'react'
+import { useState } from 'react';
 import ResearchCard from '../components/ResearchCard';
-export default function InRevision() {
+import axios from '../api/axios.config';
+function InReview() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [reviewPapers, setReviewPapers] = useState([]);
 
+  useEffect(() => {
+    const getReviewPapers = async () => {
+      try{
+        console.log("Fetching review papers...");
+        const response = await axios.get('/paper/getInRevisionPapers');
+        setReviewPapers(response.data.data);
+        console.log(reviewPapers);
+      }catch(error){
+        console.error("Error fetching review papers:", error);
+      }
+    }
+    getReviewPapers();
+  }, []);
+  console.log("Rendered review papers:", reviewPapers);
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
-      <div className="max-w-7xl mx-auto">
-       
-
-        {/* Search and Filter Bar */}
-        <div className="mb-8 flex flex-col sm:flex-row gap-3">
+    <div className='lg:ml-64 pt-16 lg:pt-0 '>
+      {/* Search Bar and Filter */}
+      <div className='px-6 mt-6'>
+        <div className='flex gap-3 items-center'>
           {/* Search Bar */}
-          <div className="relative flex-1">
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={20}
-            />
+          <div className='flex-1 relative'>
             <input
-              type="text"
-              placeholder="Search papers by title, author name, or university..."
+            autoFocus
+              type='text'
+              placeholder='Search by title, author, topic, or conference...'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className='w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 transition-colors'
             />
+            <svg 
+              className='absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400'
+              fill='none' 
+              stroke='currentColor' 
+              viewBox='0 0 24 24'
+            >
+              <path 
+                strokeLinecap='round' 
+                strokeLinejoin='round' 
+                strokeWidth={2} 
+                d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' 
+              />
+            </svg>
           </div>
 
           {/* Filter Button */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-colors"
-            style={{ backgroundColor: '#001F3F' }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#003366'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#001F3F'}
+            className='px-6 py-3 lg:bg-gradient-to-b lg:from-slate-900 lg:to-slate-800 lg:shadow-2xl lg:z-40 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 whitespace-nowrap'
           >
-            <Filter size={20} />
-            <span>Filters</span>
+            <svg 
+              className='w-5 h-5' 
+              fill='none' 
+              stroke='currentColor' 
+              viewBox='0 0 24 24'
+            >
+              <path 
+                strokeLinecap='round' 
+                strokeLinejoin='round' 
+                strokeWidth={2} 
+                d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z' 
+              />
+            </svg>
+            Filters
           </button>
         </div>
 
-        {/* Filter Options (shown when filter button is clicked) */}
+        {/* Filter Panel (optional - shows when filter button is clicked) */}
         {showFilters && (
-          <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
-            <h3 className="font-semibold mb-4" style={{ color: '#001F3F' }}>
-              Filter Options
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className='mt-4 p-4 bg-gray-50 border-2 border-gray-300 rounded-lg'>
+            <h3 className='font-semibold text-gray-800 mb-3'>Filter Options</h3>
+            <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Reviewer Number
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., REV-2024-015"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Current Status
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">All</option>
-                  <option value="in-revision">In Revision</option>
-                  <option value="awaiting-resubmission">Awaiting Resubmission</option>
-                  <option value="pending-changes">Pending Changes</option>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>Topic</label>
+                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
+                  <option value=''>All Topics</option>
+                  <option value='ml'>Machine Learning</option>
+                  <option value='ai'>Artificial Intelligence</option>
+                  <option value='cv'>Computer Vision</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Department
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">All</option>
-                  <option value="cs">Computer Science</option>
-                  <option value="ee">Electrical Engineering</option>
-                  <option value="me">Mechanical Engineering</option>
-                  <option value="bio">Biotechnology</option>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>Year</label>
+                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
+                  <option value=''>All Years</option>
+                  <option value='2024'>2024</option>
+                  <option value='2023'>2023</option>
+                  <option value='2022'>2022</option>
+                </select>
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>Conference</label>
+                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
+                  <option value=''>All Conferences</option>
+                  <option value='neurips'>NeurIPS</option>
+                  <option value='icml'>ICML</option>
+                  <option value='cvpr'>CVPR</option>
                 </select>
               </div>
             </div>
           </div>
         )}
+      </div>
+     
+      <div className='space-y-4 px-6 mt-6'>
+       {
+        reviewPapers.map((paper) => (
 
-        {/* Papers Grid */}
-        <div className="space-y-6">
-          <ResearchCard status="In-Revision" />
-          <ResearchCard status="In-Revision" />
-          <ResearchCard status="In-Revision" />
+          <ResearchCard
+            title={paper.title}
+            titleUrl={paper.pdfUrl}
+            authors={paper.authors}
+            abstract={paper.abstract}
+            affiliation={paper.affiliation}
+            topic={paper.topic}
+            conference={paper.conference}
+            year={paper.year}
+            status={paper.acceptanceStatus}
+            reviewer={paper.reviewer}
+            reviewerid={paper.reviewerid}
 
-          <div className="text-center text-gray-500 py-8">
-            
-          </div>
-        </div>
+          />
+
+        ))
+
+       }
       </div>
     </div>
-  );
+  )
 }
+
+export default InReview

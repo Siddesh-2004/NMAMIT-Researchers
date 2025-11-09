@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "../api/axios.config";
+import { toast } from "react-hot-toast";
 
 const ResearchCard = ({
   title = "Deep Learning Approaches for Natural Language Processing",
@@ -17,31 +19,8 @@ const ResearchCard = ({
 }) => {
   const [showAbstract, setShowAbstract] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [showUpdateStatus, setShowUpdateStatus] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [scoreInput, setScoreInput] = useState("");
-  const [revisionComments, setRevisionComments] = useState("");
 
-  const handleStatusSelect = (statusType) => {
-    setSelectedStatus(statusType);
-    setScoreInput("");
-    setRevisionComments("");
-  };
-
-  const handleSubmit = () => {
-    if (selectedStatus === "Accepted" && scoreInput) {
-      console.log("Accepted with score:", scoreInput);
-      // Add your submit logic here
-    } else if (selectedStatus === "Revision" && revisionComments) {
-      console.log("Revision with comments:", revisionComments);
-      // Add your submit logic here
-    }
-    // Reset and close
-    setShowUpdateStatus(false);
-    setSelectedStatus(null);
-    setScoreInput("");
-    setRevisionComments("");
-  };
+  
 
   return (
     <div className="bg-white border-2 border-gray-300 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
@@ -58,18 +37,17 @@ const ResearchCard = ({
         
       </div>
 
-      {/* Authors and Affiliation */}
+       {/* Authors and Affiliation */}
       <div className="mb-4">
-        <p className="text-gray-700">
-          <span className="font-medium">{authors}</span>
-          {" • "}
-          <a
-            href={affiliationUrl}
-            className="text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            {affiliation}
-          </a>
-        </p>
+      <p className="text-gray-700">
+      {
+        authors.map((author,index)=>(
+         <span key={index}>
+          {author.fullName}{"-"}{author.affiliation}{" • "}
+         </span>
+        ))
+      }
+      </p>
       </div>
 
       {/* Topic, Reviewer and Score */}
@@ -77,9 +55,9 @@ const ResearchCard = ({
         <p className="text-gray-600">
           <span className="font-medium">Topic:</span> {topic}
           {" • "}
-          <span className="font-medium">Reviewer:</span> {reviewer}
+          <span className="font-medium">Reviewer:</span> {reviewer.reviewerName}
           {" • "}
-          {score && <span className="font-medium">Score: {score}/10</span>}
+           {score!=0 && score &&  <span className="font-medium">Score: {score}/10</span>}
         </p>
       </div>
 
@@ -99,6 +77,7 @@ const ResearchCard = ({
         {status=="Accepted" &&
           <p className="text-gray-600 font-medium">{conference}</p>}
           {status === "In-Revision" && (
+            console.log(status),
             <button
               onClick={() => setShowSuggestions(!showSuggestions)}
               className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium"

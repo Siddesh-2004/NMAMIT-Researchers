@@ -109,20 +109,21 @@ function InReview() {
           </div>
         )}
       </div>
-      Research Cards
+     
       <div className='space-y-4 px-6 mt-6'>
        {
         reviewPapers.map((paper) => (
 
           <ResearchCard
             title={paper.title}
+            titleUrl={paper.pdfUrl}
             authors={paper.authors}
             abstract={paper.abstract}
             affiliation={paper.affiliation}
-            topics={paper.topics}
+            topic={paper.topic}
             conference={paper.conference}
             year={paper.year}
-            status={paper.status}
+            status={paper.acceptanceStatus}
             reviewer={paper.reviewer}
             reviewerid={paper.reviewerid}
 
