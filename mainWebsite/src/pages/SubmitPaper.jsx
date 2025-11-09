@@ -68,11 +68,15 @@ export default function SubmitPaper() {
           const newAuthors = formattedUser.filter(
             (user) => !selectedAuthors.some((a) => a.id === user.id)
           );
-          
+          console.log(response);
           setFetchedAuthors(newAuthors);
+
         }            
       } catch (err) {
         setFetchedAuthors([]); 
+        console.log("Error fetching authors:", err);
+        toast.error(err.response?.data?.message || "Error fetching authors.");
+      }
         
     };
     
@@ -84,11 +88,12 @@ export default function SubmitPaper() {
   }, [finalQuery, selectedAuthors]); 
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter'|| e.type === 'click' ) {
       e.preventDefault();
       setFinalQuery(searchQuery); 
       setShowAuthorDropdown(true);
     }
+  
   };
 
   const handleFileUpload = (file) => {
@@ -125,6 +130,7 @@ export default function SubmitPaper() {
   const addAuthor = (author) => {
     setSelectedAuthors([...selectedAuthors, author]);
     setSearchQuery('');
+    toast.success(`${author.name} added as co-author.`);
     setShowAuthorDropdown(false);
   };
 
@@ -297,7 +303,14 @@ export default function SubmitPaper() {
               onFocus={() => setShowAuthorDropdown(true)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            
+               <button
+              type="button"
+              onClick={handleSearchKeyPress}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors z-10 cursor-pointer"
+              title="Search"
+            >
+              <Search size={20} />
+            </button>
             {showAuthorDropdown && searchQuery && fetchedAuthors.length > 0 && (
               <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                 {fetchedAuthors.map(author => (
@@ -425,23 +438,6 @@ export default function SubmitPaper() {
                   </p>
                 )}
               </div>
-            </div>
-
-            {/* keywords */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Keywords <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={keywords}
-                onChange={(e) => setKeywords(e.target.value)}
-                placeholder="Enter paper keywords"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              {keywords === '' && (
-                <p className="text-xs text-red-500 mt-1">Required field</p>
-              )}
             </div>
           </div>
         </div>
