@@ -127,84 +127,45 @@ console.log(papersInReview);
   .status(200)
   .json(new ApiResponse(papersInReview, "Papers fetched successfully", 200));
 });
-
-const getAcceptedPapers = asyncHandler(async (req, res) => {
-  const papers = await PaperModel.find({ acceptanceStatus: "Accepted" });
-  if (!papers || papers.length === 0) {
-    throw new ApiError(500, "They are no papers accepted");
-  }
-  return res
-  .status(200)
-  .json(new ApiResponse(papers, "Papers fetched successfully", 200));
-});
-
-const getInRevisionPapers = asyncHandler(async (req, res) => {
-  const papers = await PaperModel.find({ acceptanceStatus: "InRevision" });
-  if (!papers || papers.length === 0) {
-    throw new ApiError(500, "They are no papers in revision");
-  }
-  return res
-  .status(200)
-  .json(new ApiResponse(papers, "Papers fetched successfully", 200));
-});
-
+ 
 
 const updateAcceptanceStatus = asyncHandler(async (req, res) => {
-  const {score,acceptanceStatus,paperId,reviews} = req.body;
-  let updatedPaper;
-  if(!acceptanceStatus || !paperId){
-    throw new ApiError(400,"Accepted status and paperId are required");
-
-  }
-  if(!score && acceptanceStatus=="Accepted"){
-    throw new ApiError(400,"Score is required for making the paper Accepted");
-  }
-  if(score && score<0 || score>100){
-    throw new ApiError(400,"Score should be between 0 and 100");
+  const {score,acceptanceStatus,paperId,reviews,conference,year}=req.body;
+  if(!acceptanceStatus){
+    throw new ApiError(400,"Accepted status is required");
   }
   if(acceptanceStatus=="Accepted"){
-    updatedPaper = await PaperModel.findByIdAndUpdate(paperId,{$set:{score,acceptanceStatus}},{new:true});
-    if(!updatedPaper){
-      throw new ApiError(500,"Failed to update paper");
+    if(!conference || !year||!paperId){
+      throw new ApiError(400,"Conference and year are required");
     }
-     return res
-    .status(200)
-    .json(new ApiResponse(updatedPaper,"Paper updated successfully to Accepted",200));
-  } else if(acceptanceStatus=="InRevision"){
-     if(!reviews){
-       throw new ApiError(400,"Reviews are required for changing the acceptance status to InRevision");
-     }
-    let paperToUpdate= await PaperModel.findById(paperId);
-    if(!paperToUpdate){
-      throw new ApiError(400,"Paper not found");
-    }
-    let revisionCount=paperToUpdate.revisionCount+1;
-    let updatedPaper = await PaperModel.findByIdAndUpdate(paperId,{$set:{score,acceptanceStatus,revisionCount,review:reviews}},{new:true});
-    if(!updatedPaper){
-      throw new ApiError(500,"Failed to update paper");
-    }
-    updatedPaper = await PaperModel.findByIdAndUpdate(paperId,{$set:{score,acceptanceStatus,review:reviews}},{new:true});
+    const updatedPaper = await PaperModel.findByIdAndUpdate(paperId,{$set:{score,acceptanceStatus,conference,year}},{new:true});
     if(!updatedPaper){
       throw new ApiError(500,"Failed to update paper");
     }
     return res
     .status(200)
-    .json(new ApiResponse(updatedPaper,"Paper updated to InRevision successfully",200));
+    .json(new ApiResponse(updatedPaper,"Paper updated successfully to Accepted",200));
+  } else if(acceptanceStatus=="InRevision"){
+    if(!reviews){
+      throw new ApiError(400,"Reviews are required for changing the acceptance status to InRevision");
+    }
+   const paperToUpdate= await PaperModel.findById(paperId);
+   if(!paperToUpdate){
+     throw new ApiError(400,"Paper not found");
+   }
+   const revisionCount=paperToUpdate.revisionCount+1;
+   const updatedPaper = await PaperModel.findByIdAndUpdate(paperId,{$set:{score,acceptanceStatus,revisionCount,review:reviews}},{new:true});
+   if(!updatedPaper){
+     throw new ApiError(500,"Failed to update paper");
+   }
+   return res
+   .status(200)
+   .json(new ApiResponse(updatedPaper,"Paper updated to InRevision successfully",200));
   }
 });
 
-const deletePaper = asyncHandler(async (req, res) => {
-  const {paperId} = req.body;
-  if(!paperId){
-    throw new ApiError(400,"PaperId is required");
-  }
-  const deletedPaper = await PaperModel.findByIdAndDelete(paperId);
-  if(!deletedPaper){
-    throw new ApiError(500,"Failed to delete paper");
-  }
-  return res
-  .status(200)
-  .json(new ApiResponse(deletedPaper,"Paper deleted successfully",200));
-});
 
-export { addPaper ,getInReviewPapers,getAcceptedPapers,getInRevisionPapers,updateAcceptanceStatus,deletePaper};
+
+
+
+export { addPaper ,getInReviewPapers,updateAcceptanceStatus};
