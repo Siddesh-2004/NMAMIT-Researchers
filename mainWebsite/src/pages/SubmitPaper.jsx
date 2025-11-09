@@ -4,90 +4,97 @@ import toast from "react-hot-toast";
 import axios from '../api/axios.config';
 
 export default function SubmitPaper() {
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAuthors, setSelectedAuthors] = useState([]);
-  const [fetchedAuthors, setFetchedAuthors] = useState([]);
-
-  const [title, setTitle] = useState('');
-  const [topic, setTopic] = useState('');
-  const [abstract, setAbstract] = useState('');
-  const [showAuthorDropdown, setShowAuthorDropdown] = useState(false);
-  const [finalQuery, setFinalQuery] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Form state - consolidated
   const [formData, setFormData] = useState({
     uploadedFile: null,
     title: '',
     topic: '',
     abstract: '',
-    authorIds:'fsda',
-    authorId:'adfs',
-    keywords:'sad',
+    keywords: ''
   });
-    useEffect(() => {
+  
+  // UI state
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentUser, setCurrentUser] = useState({fullName:""},{email:""});
+  
+  // Author management state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAuthors, setSelectedAuthors] = useState([]);
+  const [fetchedAuthors, setFetchedAuthors] = useState([]);
+  const [showAuthorDropdown, setShowAuthorDropdown] = useState(false);
+  const [finalQuery, setFinalQuery] = useState('');
+
+  // TODO: Get current user from your auth context
+  // const { currentUser } = useAuth();
+  useEffect(()=>{
+    const getCurrentUserId=async()=>{
+      try{
+        const response=await axios.get("/user/getCurrentUser",{withCredentials:true});
+        setCurrentUserId(response.data.data._id);
+        setCurrentUser(response.data.data);
+      }catch(error){
+        console.log(error);
+      }
+    }
+      getCurrentUserId();
+  },[]);
+
+  // Update form data helper
+  const updateFormData = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  useEffect(() => {
     const searchUser = async () => {
-      // NOTE: finalQuery will only be set when the user presses Enter
       if (finalQuery.trim() === "") {
         setFetchedAuthors([]);
         return;
       }
       try {
         const response = await axios.post("/user/findByUserName", { userName: finalQuery });
-        console.log(response.data);
-
+        
         if (response.data.success) {
           const user = response.data.data;
           
           const formattedUser = [{
-                 id: user._id || user.id, 
-                 name: user.fullName || user.userName, 
-                 email: user.email,
-             }];
-          const newAuthors = formattedUser.filter(
-                    (user) => !selectedAuthors.some((a) => a.id === user.id)
-                );
-                setFetchedAuthors(newAuthors);
-                // toast.success(response.data.message);
+            id: user._id, 
+            name: user.fullName, 
+            email: user.email,
+          }];
           
+          const newAuthors = formattedUser.filter(
+            (user) => !selectedAuthors.some((a) => a.id === user.id)
+          );
+          
+          setFetchedAuthors(newAuthors);
         }            
       } catch (err) {
-        // Clear results on failure
         setFetchedAuthors([]); 
-        if (err.response?.status === 404) {
-          toast.error("No user found with that name/email.")
-          
-        } else {
-          console.error(err);
-          toast.error("Failed to fetch user");
-        }
-      }
-    };
-  if (finalQuery.trim() !== "") {
-    searchUser();
-  }else {
-        // Clear the dropdown results immediately if the search box is emptied
-        setFetchedAuthors([]);
-  }   
-}, [finalQuery, selectedAuthors]); 
-
-
-const handleSearchKeyPress = (e) => {
-    // Check if the pressed key is 'Enter' (key code 13 is redundant but safe)
-    if (e.key === 'Enter') {
-        e.preventDefault(); // Prevents form submission or default browser behavior
         
-        // This is the key step: setting finalQuery triggers the useEffect hook once.
-        setFinalQuery(searchQuery); 
-        setShowAuthorDropdown(true);
+    };
+    
+    if (finalQuery.trim() !== "") {
+      searchUser();
+    } else {
+      setFetchedAuthors([]);
+    }   
+  }, [finalQuery, selectedAuthors]); 
+
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setFinalQuery(searchQuery); 
+      setShowAuthorDropdown(true);
     }
- };
+  };
 
   const handleFileUpload = (file) => {
     if (file && file.type === 'application/pdf') {
-      setUploadedFile(file);
-      // Simulate upload progress
+      updateFormData('uploadedFile', file);
+      
       let progress = 0;
       const interval = setInterval(() => {
         progress += 10;
@@ -95,11 +102,9 @@ const handleSearchKeyPress = (e) => {
         if (progress >= 100) clearInterval(interval);
       }, 100);
     } else {
-      alert('Please upload a PDF file only.');
+      toast.error('Please upload a PDF file only.');
     }
   };
-
-
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -129,77 +134,89 @@ const handleSearchKeyPress = (e) => {
 
   const removeFile = (e) => {
     e.stopPropagation();
-    setUploadedFile(null);
+    updateFormData('uploadedFile', null);
     setUploadProgress(0);
   };
 
   const isFormValid = () => {
+    const abstractWordCount = formData.abstract.split(' ').filter(word => word).length;
     return (
-      uploadedFile &&
+      formData.uploadedFile &&
       uploadProgress === 100 &&
-      title.trim() !== '' &&
-      topic.trim() !== '' &&
-      abstract.trim() !== '' &&
-      abstract.split(' ').length <= 300
+      formData.title.trim() !== '' &&
+      formData.topic.trim() !== '' &&
+      formData.abstract.trim() !== '' &&
+      abstractWordCount <= 300
     );
   };
 
-  const handleSubmit = async(e) => {
-     e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     if (!isFormValid()) {
       toast.error("Please fill all required fields correctly before submitting.");
       return;
     }
+    
     setIsSubmitting(true);
-    console.log("Submitting paper...");
-     try {
-        const data = new FormData();
-      // Handle actual submission logic here
-        data.append('paperFile', uploadedFile);
-        data.append('title', title);
-        data.append('topic', topic);
-        data.append('abstract', abstract);
-        data.append('authorId', 'currentUserId'); 
-        data.append('authorIds', 'currentUserId');
-        data.append('keywords', 'example,keywords');
+    
+    try {
+      const data = new FormData();
+      data.append('paper', formData.uploadedFile);
+      data.append('title', formData.title);
+      data.append('topic', formData.topic);
+      data.append('abstract', formData.abstract);
+      data.append('keywords', formData.keywords || 'example,keywords');
+      
+      // Append current user ID as primary author
+      data.append('authors', currentUserId);
+      
+      // Append all selected co-author IDs
+      selectedAuthors.forEach(author => {
+        data.append('authors', author.id);
+      });
+      console.log(data);
 
-        const response = await axios.post('/paper/add', data, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              }
-            });
-      if (response.data.success) {
-            toast.success(response.data.message)
-
-            setFormData({
-              setUploadedFile:null,
-              title: '',
-              topic: '',
-              abstract: '',
-        
-            });
-           setIsSubmitting(flase);
-        } else {
-            toast.error(response.data.message || "Submission failed due to server error.");
+      const response = await axios.post('/paper/add', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         }
-      } catch (err) {
-        console.error("Submission Error:", err);
-        toast.error(err.response?.data?.message || "An unexpected error occurred during submission.");
-    }
-   };
+      });
+      
+      if (response.data.success) {
+        toast.success(response.data.message);
 
-  const abstractWordCount = abstract.split(' ').filter(word => word).length;
+        // Reset form
+        setFormData({
+          uploadedFile: null,
+          title: '',
+          topic: '',
+          abstract: '',
+          keywords: ''
+        });
+        setUploadProgress(0);
+        setSelectedAuthors([]);
+        setSearchQuery('');
+        setFinalQuery('');
+      } else {
+        toast.error(response.data.message || "Submission failed due to server error.");
+      }
+    } catch (err) {
+      console.error("Submission Error:", err);
+      toast.error(err.response?.data?.message || "An unexpected error occurred during submission.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const abstractWordCount = formData.abstract.split(' ').filter(word => word).length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
       <div className="max-w-4xl mx-auto">
         {/* Upload Section */}
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-6">
-          <h2
-            className="text-xl font-semibold mb-4"
-            style={{ color: '#001F3F' }}
-          >
+          <h2 className="text-xl font-semibold mb-4" style={{ color: '#001F3F' }}>
             Upload Paper
           </h2>
           
@@ -220,7 +237,7 @@ const handleSearchKeyPress = (e) => {
               onChange={(e) => handleFileUpload(e.target.files[0])}
             />
             
-            {!uploadedFile ? (
+            {!formData.uploadedFile ? (
               <>
                 <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                 <p className="text-gray-600 mb-2">
@@ -238,7 +255,7 @@ const handleSearchKeyPress = (e) => {
                   <X size={20} />
                 </button>
                 <FileText className="w-12 h-12 mx-auto mb-4" style={{ color: '#001F3F' }} />
-                <p className="font-semibold text-gray-700 mb-2">{uploadedFile.name}</p>
+                <p className="font-semibold text-gray-700 mb-2">{formData.uploadedFile.name}</p>
                 {uploadProgress < 100 ? (
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div
@@ -262,10 +279,7 @@ const handleSearchKeyPress = (e) => {
 
         {/* Author Management */}
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-6">
-          <h2
-            className="text-xl font-semibold mb-4"
-            style={{ color: '#001F3F' }}
-          >
+          <h2 className="text-xl font-semibold mb-4" style={{ color: '#001F3F' }}>
             Add Co-Authors
           </h2>
           
@@ -278,10 +292,7 @@ const handleSearchKeyPress = (e) => {
               type="text"
               placeholder="Search co-authors by name or email..."
               value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                // setShowAuthorDropdown(true);
-              }}
+              onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearchKeyPress}
               onFocus={() => setShowAuthorDropdown(true)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -310,8 +321,8 @@ const handleSearchKeyPress = (e) => {
               {/* Current User (Cannot be removed) */}
               <div className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border-2 border-blue-200">
                 <div>
-                  <p className="font-semibold text-gray-800">Dr. Riya Sharma (You)</p>
-                  <p className="text-sm text-gray-500">riya.sharma@univ.edu</p>
+                  <p className="font-semibold text-gray-800">{currentUser.fullName} (You)</p>
+                  <p className="text-sm text-gray-500">{currentUser.email}</p>
                 </div>
                 <span className="text-xs font-semibold text-blue-600">Primary Author</span>
               </div>
@@ -340,10 +351,7 @@ const handleSearchKeyPress = (e) => {
 
         {/* Paper Details Form */}
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-6">
-          <h2
-            className="text-xl font-semibold mb-4"
-            style={{ color: '#001F3F' }}
-          >
+          <h2 className="text-xl font-semibold mb-4" style={{ color: '#001F3F' }}>
             Paper Details
           </h2>
           
@@ -355,12 +363,12 @@ const handleSearchKeyPress = (e) => {
               </label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={formData.title}
+                onChange={(e) => updateFormData('title', e.target.value)}
                 placeholder="Enter paper title"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              {title === '' && (
+              {formData.title === '' && (
                 <p className="text-xs text-red-500 mt-1">Required field</p>
               )}
             </div>
@@ -372,14 +380,28 @@ const handleSearchKeyPress = (e) => {
               </label>
               <input
                 type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
+                value={formData.topic}
+                onChange={(e) => updateFormData('topic', e.target.value)}
                 placeholder="Enter paper topic"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              {topic === '' && (
+              {formData.topic === '' && (
                 <p className="text-xs text-red-500 mt-1">Required field</p>
               )}
+            </div>
+
+            {/* Keywords */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Keywords
+              </label>
+              <input
+                type="text"
+                value={formData.keywords}
+                onChange={(e) => updateFormData('keywords', e.target.value)}
+                placeholder="Enter keywords (comma-separated)"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
             </div>
 
             {/* Abstract */}
@@ -388,14 +410,14 @@ const handleSearchKeyPress = (e) => {
                 Abstract <span className="text-red-500">*</span>
               </label>
               <textarea
-                value={abstract}
-                onChange={(e) => setAbstract(e.target.value)}
+                value={formData.abstract}
+                onChange={(e) => updateFormData('abstract', e.target.value)}
                 placeholder="Enter paper abstract (max 300 words)"
                 rows="6"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               />
               <div className="flex justify-between items-center mt-1">
-                {abstract === '' ? (
+                {formData.abstract === '' ? (
                   <p className="text-xs text-red-500">Required field</p>
                 ) : (
                   <p className={`text-xs ${abstractWordCount > 300 ? 'text-red-500' : 'text-gray-500'}`}>
@@ -428,23 +450,23 @@ const handleSearchKeyPress = (e) => {
         <div className="text-center mb-8">
           <button
             onClick={handleSubmit}
-            disabled={!isFormValid()}
+            disabled={!isFormValid() || isSubmitting}
             className={`px-8 py-4 rounded-lg font-semibold text-white text-lg transition-all ${
-              isFormValid()
+              isFormValid() && !isSubmitting
                 ? 'cursor-pointer shadow-lg hover:shadow-xl'
                 : 'opacity-50 cursor-not-allowed'
             }`}
             style={{ 
-              backgroundColor: isFormValid() ? '#001F3F' : '#6B7280'
+              backgroundColor: (isFormValid() && !isSubmitting) ? '#001F3F' : '#6B7280'
             }}
             onMouseEnter={(e) => {
-              if (isFormValid()) e.target.style.backgroundColor = '#003366';
+              if (isFormValid() && !isSubmitting) e.target.style.backgroundColor = '#003366';
             }}
             onMouseLeave={(e) => {
-              if (isFormValid()) e.target.style.backgroundColor = '#001F3F';
+              if (isFormValid() && !isSubmitting) e.target.style.backgroundColor = '#001F3F';
             }}
           >
-            Submit Paper
+            {isSubmitting ? 'Submitting...' : 'Submit Paper'}
           </button>
         </div>
       </div>

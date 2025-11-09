@@ -121,5 +121,21 @@ const getUserByUserName=asyncHandler(async(req,res)=>{
   }
   return res.status(200).json(new ApiResponse(user,"User fetched successfully",200));
 });
-export { signUpUser, loginUser, logoutUser,verifyJwtUser,getUserByUserName};
+const getCurrentUser=asyncHandler(async(req,res)=>{
+  const accessToken=req.cookies?.accessToken||req.header("Authorization")?.replace("Bearer ", "");
+  if(!accessToken){
+      throw new ApiError(401,"Please Login")
+  }
+  const decodedToken=jwt.verify(accessToken,process.env.ACCESS_TOKEN_SECRET);
+  const user=await UserModel.findOne({userName:decodedToken.username});
+  if(!user){
+      throw new ApiError(401,"Invalid AccessToken");
+  }
+  return res.status(200).json(new ApiResponse(user,"User fetched successfully",200));
+});
+
+
+
+
+export { signUpUser, loginUser, logoutUser,verifyJwtUser,getUserByUserName,getCurrentUser};
 
