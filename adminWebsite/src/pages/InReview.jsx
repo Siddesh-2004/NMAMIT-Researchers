@@ -18,7 +18,7 @@ function InReview() {
       }
     }
     getReviewPapers()
-  });
+  },[]);
   console.log(reviewPapers);
 
   return (
@@ -116,7 +116,7 @@ function InReview() {
           reviewPapers.map((paper)=>(
             <ResearchCard
               title={paper.title}
-              titleUrl={paper.titleUrl}
+              titleUrl={paper.pdfUrl}
               authors={paper.authors}
               affiliation={paper.affiliation}
               affiliationUrl={paper.affiliationUrl}

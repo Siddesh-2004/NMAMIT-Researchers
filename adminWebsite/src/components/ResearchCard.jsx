@@ -3,11 +3,28 @@ import React, { useState } from "react";
 const ResearchCard = ({
   title = "Deep Learning Approaches for Natural Language Processing",
   titleUrl = "#",
-  authors = ["John Smith, Jane Doe, Robert Johnson"],
-  affiliation = "Stanford University",
-  affiliationUrl = "#",
+  authors=[
+                {
+                    "_id": "69086fbbd19d2750808c873c",
+                    "fullName": "siddehshukla",
+                    "email": "siddesh@gmail.com",
+                    "affiliation": "rtyui"
+                },
+                {
+                    "_id": "69086f16d19d2750808c8735",
+                    "fullName": "siddehshukla",
+                    "email": "siddeshpoojary@gmail.com",
+                    "affiliation": "ertyj"
+                }
+            ],
+
   topic = "Machine Learning",
-  reviewer = "Dr. Emily Chen",
+  reviewer = {
+                "_id": "6908d780cb2f6fb183e3ce85",
+                "reviewerName": "dr. sneha iyer",
+                "email": "sneha.iyer@example.com",
+                "qualification": "ph.d. in machine learning"
+            },
   score ,
   conference = "NeurIPS 2024",
   abstract = "This paper presents novel deep learning approaches for natural language processing tasks. We introduce a new architecture that combines transformer models with attention mechanisms to achieve state-of-the-art results on multiple benchmarks. Our experiments demonstrate significant improvements over existing methods in both accuracy and computational efficiency.",
@@ -195,15 +212,18 @@ console.log(score);
 
       {/* Authors and Affiliation */}
       <div className="mb-4">
+      <p className="text-gray-700">
+      {
+        authors.map((author,index)=>(
+         <span key={index}>
+          {author.fullName}{"-"}{author.affiliation}{" • "}
+         </span>
+        ))
+      }
+      </p>
         <p className="text-gray-700">
-          <span className="font-medium">{authors}</span>
-          {" • "}
-          <a
-            href={affiliationUrl}
-            className="text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            {affiliation}
-          </a>
+       
+        
         </p>
       </div>
 
@@ -212,9 +232,9 @@ console.log(score);
         <p className="text-gray-600">
           <span className="font-medium">Topic:</span> {topic}
           {" • "}
-          <span className="font-medium">Reviewer:</span> {reviewer}
+          <span className="font-medium">Reviewer:</span> {reviewer.reviewerName}
           {" • "}
-          {score && <span className="font-medium">Score: {score}/10</span>}
+         {score!=0 && <span className="font-medium">Score: {score}/10</span>}
         </p>
       </div>
 
