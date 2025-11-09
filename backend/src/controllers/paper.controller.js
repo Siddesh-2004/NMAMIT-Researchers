@@ -136,8 +136,8 @@ const updateAcceptanceStatus = asyncHandler(async (req, res) => {
     throw new ApiError(400,"Accepted status is required");
   }
   if(acceptanceStatus=="Accepted"){
-    if(!conference || !year||!paperId){
-      throw new ApiError(400,"Conference and year are required");
+    if(!conference || !year||!paperId||!score){
+      throw new ApiError(400,"Conference , year , paperId and score are required");
     }
     const updatedPaper = await PaperModel.findByIdAndUpdate(paperId,{$set:{score,acceptanceStatus,conference,year}},{new:true});
     if(!updatedPaper){
@@ -162,6 +162,8 @@ const updateAcceptanceStatus = asyncHandler(async (req, res) => {
    return res
    .status(200)
    .json(new ApiResponse(updatedPaper,"Paper updated to InRevision successfully",200));
+  }else{
+    throw new ApiError(400,"Invalid acceptance status");
   }
 });
 
