@@ -168,7 +168,158 @@ const updateAcceptanceStatus = asyncHandler(async (req, res) => {
 });
 
 
+const getInRevisionPapers = asyncHandler(async (req, res) => {
+  const papersInRevision = await PaperModel.aggregate([
+  {
+    $match: {
+      acceptanceStatus: "InRevision"
+    }
+  },
+  {
+    $lookup: {
+      from: "users", // MongoDB collection name (lowercase plural)
+      localField: "authors",
+      foreignField: "_id",
+      as: "authorDetails"
+    }
+  },
+  {
+    $lookup: {
+      from: "reviewers", // MongoDB collection name (lowercase plural)
+      localField: "reviwerId",
+      foreignField: "_id",
+      as: "reviewerDetails"
+    }
+  },
+  {
+    $unwind: {
+      path: "$reviewerDetails",
+      preserveNullAndEmptyArrays: true // In case some papers don't have a reviewer yet
+    }
+  },
+  {
+    $project: {
+      title: 1,
+      topic: 1,
+      conference: 1,
+      year: 1,
+      abstract: 1,
+      keywords: 1,
+      score: 1,
+      revisionCount: 1,
+      acceptanceStatus: 1,
+      review: 1,
+      pdfUrl: 1,
+      authors: {
+        $map: {
+          input: "$authorDetails",
+          as: "author",
+          in: {
+            _id: "$$author._id",
+            fullName: "$$author.fullName",
+            email: "$$author.email",
+            affiliation: "$$author.affiliation"
+          }
+        }
+      },
+      reviewer: {
+        _id: "$reviewerDetails._id",
+        reviewerName: "$reviewerDetails.reviewerName",
+        email: "$reviewerDetails.email",
+        qualification: "$reviewerDetails.qualification"
+      }
+    }
+  },
+  {
+    $sort: {
+      year: -1 // Optional: sort by year descending
+    }
+  }
+]);
+ if(!papersInRevision || papersInRevision.length===0){
+   throw new ApiError(500,"No papers in revision");
+ }
+ return res
+ .status(200)
+ .json(new ApiResponse(papersInRevision,"Papers fetched successfully",200));
+});
 
 
+const getAcceptedPapers = asyncHandler(async (req, res) => {
+  const papersAccepted = await PaperModel.aggregate([
+  {
+    $match: {
+      acceptanceStatus: "Accepted"
+    }
+  },
+  {
+    $lookup: {
+      from: "users", // MongoDB collection name (lowercase plural)
+      localField: "authors",
+      foreignField: "_id",
+      as: "authorDetails"
+    }
+  },
+  {
+    $lookup: {
+      from: "reviewers", // MongoDB collection name (lowercase plural)
+      localField: "reviwerId",
+      foreignField: "_id",
+      as: "reviewerDetails"
+    }
+  },
+  {
+    $unwind: {
+      path: "$reviewerDetails",
+      preserveNullAndEmptyArrays: true // In case some papers don't have a reviewer yet
+    }
+  },
+  {
+    $project: {
+      title: 1,
+      topic: 1,
+      conference: 1,
+      year: 1,
+      abstract: 1,
+      keywords: 1,
+      score: 1,
+      revisionCount: 1,
+      acceptanceStatus: 1,
+      review: 1,
+      pdfUrl: 1,
+      authors: {
+        $map: {
+          input: "$authorDetails",
+          as: "author",
+          in: {
+            _id: "$$author._id",
+            fullName: "$$author.fullName",
+            email: "$$author.email",
+            affiliation: "$$author.affiliation"
+          }
+        }
+      },
+      reviewer: {
+        _id: "$reviewerDetails._id",
+        reviewerName: "$reviewerDetails.reviewerName",
+        email: "$reviewerDetails.email",
+        qualification: "$reviewerDetails.qualification"
+      }
+    }
+  },
+  {
+    $sort: {
+      year: -1 // Optional: sort by year descending
+    }
+  }
+]);
+ if(!papersAccepted || papersAccepted.length===0){
+   throw new ApiError(500,"No papers accepted");
+ }
+ return res
+ .status(200)
+ .json(new ApiResponse(papersAccepted,"Papers fetched successfully",200));
+});
 
-export { addPaper ,getInReviewPapers,updateAcceptanceStatus};
+
+export { addPaper ,getInReviewPapers,updateAcceptanceStatus,getInRevisionPapers,getAcceptedPapers};
