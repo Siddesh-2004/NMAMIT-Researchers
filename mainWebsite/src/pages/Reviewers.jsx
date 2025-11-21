@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import ReviewerInfoCard from "../components/ReviewerInfoCard";
+
 export default function Reviewers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [reviewersInfo, setReviewersInfo] = useState([]);
+    
+    useEffect(() => {
+          const getReviewersInfo = async () => {
+            try{
+              console.log("Fetching Reviewers Info ...");
+              const response = await axios.get('');
+              setReviewersInfo(response.data.data);
+              console.log(ReviewersInfo);
+            }catch(error){
+              console.error("Error fetching authors info:", error);
+            }
+          }
+          getReviewersInfo();
+        }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
@@ -84,14 +100,20 @@ export default function Reviewers() {
 
         {/* Reviewers Grid */}
         <div className="space-y-6">
-          {/* You can import and use your ReviewerInfoCard component here */}
-          <ReviewerInfoCard />
-          <ReviewerInfoCard />
-          <ReviewerInfoCard />
-          
-          <div className="text-center text-gray-500 py-8">
-            
-          </div>
+         {
+          reviewersInfo.map((reviewer) => (
+
+            <ResearchCard
+              name={reviewer.name} 
+              reviewerNumber={reviewer.reviewerNumber}
+              phone={reviewer.phone}
+              email={reviewer.email}
+              averageScore={reviewer.averageScore}
+              papersReviewed={reviewer.papersReviewed}
+              qualification={reviewer.qualification}
+            />
+          ))
+        }
         </div>
       </div>
     </div>

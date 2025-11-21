@@ -1,10 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Analytics from '../components/AnalyticsCard';
 import ResearchCard from '../components/ResearchCard';
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [acceptedPapers, setAcceptedPapers] = useState([]);
+    
+    useEffect(() => {
+          const getAcceptedPapers = async () => {
+            try{
+              console.log("Fetching Accepted papers...");
+              const response = await axios.get('/paper/updateAcceptanceStatus');
+              setAcceptedPapers(response.data.data);
+              console.log(acceptedPapers);
+            }catch(error){
+              console.error("Error fetching review papers:", error);
+            }
+          }
+          getAcceptedPapers();
+        }, []);
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
       {/* Analytics Section */}
@@ -102,11 +117,26 @@ function Home() {
         )}
       </div>
 
-      {/* Research Cards */}
       <div className='space-y-4 px-6 mt-6'>
-        <ResearchCard status="Accepted"  />
-        <ResearchCard status="Accepted"  />
-        <ResearchCard status="Accepted" />
+        {
+          acceptedPapers.map((paper) => (
+
+            <ResearchCard
+              title={paper.title} 
+              titleUrl={paper.pdfUrl}
+              authors={paper.authors}
+              abstract={paper.abstract}
+              affiliation={paper.affiliation}
+              topic={paper.topic}
+              status={paper.acceptanceStatus}
+              reviewer={paper.reviewer}
+              score={paper.score}
+              year={paper.year}
+              conference={paper.conference}
+              RevisionCount={paper.RevisionCount}
+            />
+          ))
+        }
       </div>
     </div>
   );

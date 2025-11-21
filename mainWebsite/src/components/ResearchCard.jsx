@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 const ResearchCard = ({
   title = "Deep Learning Approaches for Natural Language Processing",
   titleUrl = "#",
-  authors = "John Smith, Jane Doe, Robert Johnson",
+  authors = [],
   affiliation = "Stanford University",
   affiliationUrl = "#",
   topic = "Machine Learning",
