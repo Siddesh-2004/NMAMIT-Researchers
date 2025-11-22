@@ -27,7 +27,7 @@ import Reviewers from './pages/Reviewers'
 //     {/* <Authors/> */}
 //     {/* <Reviewers/> */}
 //     {/* <InRevision/> */}
-//       {/* <Landing/> */}
+      // {/* <Landing/> */}
 //       {/* <Login/> */}
 //       {/* <Topic /> */}
 //       {/* <ContactUs /> */}
@@ -38,6 +38,14 @@ import Reviewers from './pages/Reviewers'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // NEW STATE: Tracks if the user has clicked "Get Started"
+  const [showLogin, setShowLogin] = useState(false); 
+  
+  // The function to trigger the switch from Landing to Login
+  const handleGetStarted = () => {
+    setShowLogin(true);
+  }
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Layout />}>
@@ -86,8 +94,12 @@ function App() {
       />
       {isLoggedIn ? (
         <RouterProvider router={router} />
-      ) : (
+      ): showLogin ? (
+        // 2. User is NOT logged in, but has clicked "Get Started": Show the Login Page
         <Login setIsLoggedIn={setIsLoggedIn} />
+      ) : (
+        // 3. User is NOT logged in, and hasn't clicked yet: Show the Landing Page
+        <Landing handleGetStarted={handleGetStarted} />
       )}
     </>
   );

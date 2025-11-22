@@ -4,25 +4,26 @@ import ResearchCard from '../components/ResearchCard';
 import axios from '../api/axios.config';
 
 
-function InReview() {
+function getInRevisionPapers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [reviewPapers, setReviewPapers] = useState([]);
+  const [revisionPapers, setRevisionPapers] = useState([]);
 
   useEffect(() => {
-    const getReviewPapers = async () => {
+    const getRevisionPapers = async () => {
       try{
-        console.log("Fetching review papers...");
+        console.log("Fetching revision papers...");
         const response = await axios.get('/paper/getInRevisionPapers');
-        setReviewPapers(response.data.data);
-        console.log(reviewPapers);
+        setRevisionPapers(response.data.data);
+        console.log(revisionPapers);
       }catch(error){
-        console.error("Error fetching review papers:", error);
+        console.error("Error fetching revision papers:", error);
       }
     }
-    getReviewPapers();
+    getRevisionPapers();
   }, []);
-  console.log("Rendered review papers:", reviewPapers);
+  console.log("Rendered revision papers:", revisionPapers);
+
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
       {/* Search Bar and Filter */}
@@ -128,7 +129,6 @@ function InReview() {
             status={paper.acceptanceStatus}
             reviewer={paper.reviewer}
             reviewerid={paper.reviewerid}
-
             score={paper.score}
             revisionCount={paper.revisionCount}
             suggestions={paper.suggestions}
