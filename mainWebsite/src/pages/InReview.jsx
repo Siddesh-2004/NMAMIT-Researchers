@@ -112,6 +112,7 @@ function InReview() {
      
       <div className='space-y-4 px-6 mt-6'>
        {
+        
         reviewPapers.map((paper) => (
 
           <ResearchCard
@@ -128,7 +129,6 @@ function InReview() {
             reviewerid={paper.reviewerid}
 
           />
-
         ))
 
        }

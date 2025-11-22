@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import ReviewerInfoCard from "../components/ReviewerInfoCard";
+import axios from '../api/axios.config';
 
 export default function Reviewers() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,7 +12,7 @@ export default function Reviewers() {
           const getReviewersInfo = async () => {
             try{
               console.log("Fetching Reviewers Info ...");
-              const response = await axios.get('');
+              const response = await axios.get('/reviewer/getAllReviewers');
               setReviewersInfo(response.data.data);
               console.log(ReviewersInfo);
             }catch(error){
