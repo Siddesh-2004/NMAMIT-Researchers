@@ -41,6 +41,10 @@ app.use("/api/v1/reviewer",reviewRoute);
 import paperRoute from "./routes/paper.route.js";
 app.use("/api/v1/paper",paperRoute);
 
+//import topic routes
+import topicRoute from "./routes/topic.route.js";
+app.use("/api/v1/topic",topicRoute);
+
 
 
 
