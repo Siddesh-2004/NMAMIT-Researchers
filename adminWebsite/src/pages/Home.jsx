@@ -7,12 +7,12 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [acceptedPapers, setAcceptedPapers] = useState([]);
-
+  
   useEffect(() => {
         const getAcceptedPapers = async () => {
           try{
             console.log("Fetching Accepted papers...");
-            const response = await axios.get('/paper/updateAcceptanceStatus');
+            const response = await axios.get('/paper/getAcceptedPapers');
             setAcceptedPapers(response.data.data);
             console.log(acceptedPapers);
           }catch(error){

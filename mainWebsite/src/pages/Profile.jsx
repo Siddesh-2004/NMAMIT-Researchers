@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Search, FileText, Calendar, Clock, AlertCircle, CheckCircle, XCircle, LogOut } from 'lucide-react';
 import axios from '../api/axios.config.js';
 import toast from 'react-hot-toast';
@@ -6,6 +6,26 @@ import toast from 'react-hot-toast';
 export default function Profile({setIsLoggedIn}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  // const [papers, setPapers] = useState([]);
+  // useEffect(() => {
+  //     const getPapers = async () => {
+  //       try{
+  //         console.log("Fetching user's papers...");
+  //         const response = await axios.get('/user/papers');
+
+  //         const fetchedPapers = response.data.papers || response.data.data;
+  //         // setfetchPapers(response.data.data);
+  //         setPapers(fetchedPapers);
+  //               console.log("Successfully fetched papers count:", fetchedPapers.length);
+  //       }catch(error){
+  //         console.error("Error fetching review papers:", error);
+  //       }
+  //     }
+  //     getPapers();
+  //   }, []);
+  //   console.log("Rendered review papers:", papers);
+
+  
 
   // User profile data
   const userProfile = {
@@ -16,7 +36,7 @@ export default function Profile({setIsLoggedIn}) {
     contact: '+91 98765 43210'
   };
 
-  // Research papers data
+   // Research papers data
   const papers = [
     { id: 1, title: 'Machine Learning Applications in Climate Change Prediction', submissionDate: '2024-09-15', status: 'accepted' },
     { id: 2, title: 'Quantum Computing: A Comprehensive Review', submissionDate: '2024-10-01', status: 'under-review' },

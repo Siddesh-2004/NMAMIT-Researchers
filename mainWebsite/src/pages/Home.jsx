@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Analytics from '../components/AnalyticsCard';
 import ResearchCard from '../components/ResearchCard';
+import axios from '../api/axios.config';
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,7 +12,7 @@ function Home() {
           const getAcceptedPapers = async () => {
             try{
               console.log("Fetching Accepted papers...");
-              const response = await axios.get('/paper/updateAcceptanceStatus');
+              const response = await axios.get('/paper/getAcceptedPapers');
               setAcceptedPapers(response.data.data);
               console.log(acceptedPapers);
             }catch(error){

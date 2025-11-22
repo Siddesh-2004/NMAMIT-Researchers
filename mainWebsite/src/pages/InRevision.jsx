@@ -129,6 +129,10 @@ function InReview() {
             reviewer={paper.reviewer}
             reviewerid={paper.reviewerid}
 
+            score={paper.score}
+            revisionCount={paper.revisionCount}
+            suggestions={paper.suggestions}
+
           />
 
         ))
