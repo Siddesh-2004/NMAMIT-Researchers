@@ -1,19 +1,15 @@
 import React, { useState } from "react";
-import axios from "../api/axios.config";
-import { toast } from "react-hot-toast";
 
 const ResearchCard = ({
   title = "Deep Learning Approaches for Natural Language Processing",
   titleUrl = "#",
   authors = [],
-  affiliation = "Stanford University",
-  affiliationUrl = "#",
   topic = "Machine Learning",
   reviewer = "Dr. Emily Chen",
   score ,
   conference = "NeurIPS 2024",
   abstract = "This paper presents novel deep learning approaches for natural language processing tasks. We introduce a new architecture that combines transformer models with attention mechanisms to achieve state-of-the-art results on multiple benchmarks. Our experiments demonstrate significant improvements over existing methods in both accuracy and computational efficiency.",
-  RevisionCount = 10,
+  RevisionCount = 0,
   status = "In-Revision",
   suggestions = "Please improve the methodology section and add more experimental results. The literature review needs to be expanded to include recent works from 2024.",
 }) => {
@@ -76,7 +72,7 @@ const ResearchCard = ({
         <div className="flex items-center gap-4">
         {status=="Accepted" &&
           <p className="text-gray-600 font-medium">{conference}</p>}
-          {status === "In-Revision" && (
+          {status === "InRevision" && (
             console.log(status),
             <button
               onClick={() => setShowSuggestions(!showSuggestions)}
