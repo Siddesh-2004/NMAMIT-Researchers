@@ -42,7 +42,10 @@ const addPaper = asyncHandler(async (req, res) => {
   if (!newPaper) {
     throw new ApiError(500, "Failed to create paper");
   }
-  
+  const updateUserPaperIds=await UserModel.findByIdAndUpdate(userId,{$push:{paperIds:newPaper._id}},{new:true});
+  if(!updateUserPaperIds){
+    throw new ApiError(500,"Failed to update user");
+  }
 
   const topicData=await TopicModel.findOne({topicName:topic});
   if(!topicData){
