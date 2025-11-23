@@ -18,7 +18,7 @@ export default function SubmitPaper() {
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
-  const [currentUser, setCurrentUser] = useState({fullName:""},{email:""});
+  const [currentUser, setCurrentUser] = useState({fullName: "", email: ""});
   
   // Author management state
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,26 +27,27 @@ export default function SubmitPaper() {
   const [showAuthorDropdown, setShowAuthorDropdown] = useState(false);
   const [finalQuery, setFinalQuery] = useState('');
 
-  // TODO: Get current user from your auth context
-  // const { currentUser } = useAuth();
-  useEffect(()=>{
-    const getCurrentUserId=async()=>{
-      try{
-        const response=await axios.get("/user/getCurrentUser",{withCredentials:true});
+  // Get current user
+  useEffect(() => {
+    const getCurrentUserId = async () => {
+      try {
+        const response = await axios.get("/user/getCurrentUser", {withCredentials: true});
         setCurrentUserId(response.data.data._id);
         setCurrentUser(response.data.data);
-      }catch(error){
-        console.log(error);
+      } catch(error) {
+        console.error("Error fetching current user:", error);
+        toast.error("Failed to fetch user information");
       }
     }
-      getCurrentUserId();
-  },[]);
+    getCurrentUserId();
+  }, []);
 
   // Update form data helper
   const updateFormData = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Search for authors
   useEffect(() => {
     const searchUser = async () => {
       if (finalQuery.trim() === "") {
@@ -66,18 +67,16 @@ export default function SubmitPaper() {
           }];
           
           const newAuthors = formattedUser.filter(
-            (user) => !selectedAuthors.some((a) => a.id === user.id)
+            (user) => !selectedAuthors.some((a) => a.id === user.id) && user.id !== currentUserId
           );
-          console.log(response);
+          
           setFetchedAuthors(newAuthors);
-
         }            
       } catch (err) {
         setFetchedAuthors([]); 
-        console.log("Error fetching authors:", err);
+        console.error("Error fetching authors:", err);
         toast.error(err.response?.data?.message || "Error fetching authors.");
       }
-        
     };
     
     if (finalQuery.trim() !== "") {
@@ -85,15 +84,14 @@ export default function SubmitPaper() {
     } else {
       setFetchedAuthors([]);
     }   
-  }, [finalQuery, selectedAuthors]); 
+  }, [finalQuery, selectedAuthors, currentUserId]); 
 
   const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter'|| e.type === 'click' ) {
+    if (e.key === 'Enter' || e.type === 'click') {
       e.preventDefault();
       setFinalQuery(searchQuery); 
       setShowAuthorDropdown(true);
     }
-  
   };
 
   const handleFileUpload = (file) => {
@@ -130,6 +128,7 @@ export default function SubmitPaper() {
   const addAuthor = (author) => {
     setSelectedAuthors([...selectedAuthors, author]);
     setSearchQuery('');
+    setFinalQuery('');
     toast.success(`${author.name} added as co-author.`);
     setShowAuthorDropdown(false);
   };
@@ -152,7 +151,8 @@ export default function SubmitPaper() {
       formData.title.trim() !== '' &&
       formData.topic.trim() !== '' &&
       formData.abstract.trim() !== '' &&
-      abstractWordCount <= 300
+      abstractWordCount <= 300 &&
+      currentUserId !== null
     );
   };
 
@@ -174,23 +174,34 @@ export default function SubmitPaper() {
       data.append('abstract', formData.abstract);
       data.append('keywords', formData.keywords || 'example,keywords');
       
-      // Append current user ID as primary author
-      data.append('authors', currentUserId);
+      // Build authors array with current user as first author
+      const authorsArray = [currentUserId, ...selectedAuthors.map(a => a.id)];
       
-      // Append all selected co-author IDs
-      selectedAuthors.forEach(author => {
-        data.append('authors', author.id);
+      // Append authors - try both methods depending on backend expectation
+      // Method 1: Append each author separately (for multer array handling)
+      authorsArray.forEach(authorId => {
+        data.append('authors[]', authorId);
       });
-      console.log(data);
+      
+      // OR Method 2: Send as JSON string (uncomment if backend expects this)
+      // data.append('authors', JSON.stringify(authorsArray));
+      
+      // Debug: Log FormData contents
+      console.log("=== FormData Contents ===");
+      for (let [key, value] of data.entries()) {
+        console.log(`${key}:`, value);
+      }
+      console.log("========================");
 
       const response = await axios.post('/paper/add', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
-        }
+        },
+        withCredentials: true
       });
       
       if (response.data.success) {
-        toast.success(response.data.message);
+        toast.success(response.data.message || "Paper submitted successfully!");
 
         // Reset form
         setFormData({
@@ -208,8 +219,18 @@ export default function SubmitPaper() {
         toast.error(response.data.message || "Submission failed due to server error.");
       }
     } catch (err) {
-      console.error("Submission Error:", err);
-      toast.error(err.response?.data?.message || "An unexpected error occurred during submission.");
+      console.error("=== Submission Error ===");
+      console.error("Error object:", err);
+      console.error("Error response:", err.response?.data);
+      console.error("Error status:", err.response?.status);
+      console.error("Error headers:", err.response?.headers);
+      console.error("=======================");
+      
+      const errorMessage = err.response?.data?.message 
+        || err.response?.data?.error 
+        || "An unexpected error occurred during submission.";
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -301,9 +322,9 @@ export default function SubmitPaper() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearchKeyPress}
               onFocus={() => setShowAuthorDropdown(true)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-               <button
+            <button
               type="button"
               onClick={handleSearchKeyPress}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors z-10 cursor-pointer"
@@ -311,7 +332,7 @@ export default function SubmitPaper() {
             >
               <Search size={20} />
             </button>
-            {showAuthorDropdown && searchQuery && fetchedAuthors.length > 0 && (
+            {showAuthorDropdown && fetchedAuthors.length > 0 && (
               <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                 {fetchedAuthors.map(author => (
                   <div
@@ -332,13 +353,15 @@ export default function SubmitPaper() {
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Authors List:</h3>
             <div className="space-y-2">
               {/* Current User (Cannot be removed) */}
-              <div className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border-2 border-blue-200">
-                <div>
-                  <p className="font-semibold text-gray-800">{currentUser.fullName} (You)</p>
-                  <p className="text-sm text-gray-500">{currentUser.email}</p>
+              {currentUser.fullName && (
+                <div className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border-2 border-blue-200">
+                  <div>
+                    <p className="font-semibold text-gray-800">{currentUser.fullName} (You)</p>
+                    <p className="text-sm text-gray-500">{currentUser.email}</p>
+                  </div>
+                  <span className="text-xs font-semibold text-blue-600">Primary Author</span>
                 </div>
-                <span className="text-xs font-semibold text-blue-600">Primary Author</span>
-              </div>
+              )}
 
               {/* Selected Co-Authors */}
               {selectedAuthors.map(author => (

@@ -105,7 +105,7 @@ export default function Authors() {
           {authorsInfo.map((author) => {
             const normalizedAuthor = {
               name: author.fullName || author.userName,
-              authorNumber: author.userName || author._id,   // choose what you want
+              authorNumber: author.userName || author._id,   
               email: author.email,
               papersPublished: author.PublishedPapers ?? 0,
               activePapers: author.ActivePapers ?? 0,

@@ -49,7 +49,6 @@ const addPaper = asyncHandler(async (req, res) => {
       throw new ApiError(500,"Failed to update user");
     }
   }
-  console.log("updeted user",updateUserPaperIds);
 
   const topicData=await TopicModel.findOne({topicName:topic});
   if(!topicData){
