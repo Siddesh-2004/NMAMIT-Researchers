@@ -7,20 +7,68 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [acceptedPapers, setAcceptedPapers] = useState([]);
+  const [sortOrder, setSortOrder] = useState('highest'); // 'highest' or 'lowest'
+  const [resultLimit, setResultLimit] = useState('');
+  const [rangeFrom, setRangeFrom] = useState('');
+  const [rangeTo, setRangeTo] = useState('');
     
-    useEffect(() => {
-          const getAcceptedPapers = async () => {
-            try{
-              console.log("Fetching Accepted papers...");
-              const response = await axios.get('/paper/getAcceptedPapers');
-              setAcceptedPapers(response.data.data);
-              console.log(acceptedPapers);
-            }catch(error){
-              console.error("Error fetching review papers:", error);
-            }
-          }
-          getAcceptedPapers();
-        }, []);
+  useEffect(() => {
+    const getAcceptedPapers = async () => {
+      try{
+        console.log("Fetching Accepted papers...");
+        const response = await axios.get('/paper/getAcceptedPapers');
+        setAcceptedPapers(response.data.data);
+        console.log(acceptedPapers);
+      }catch(error){
+        console.error("Error fetching review papers:", error);
+      }
+    }
+    getAcceptedPapers();
+  }, []);
+
+  // Function to filter and sort papers
+  const getFilteredPapers = () => {
+    let filtered = [...acceptedPapers];
+
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(paper => 
+        paper.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        paper.authors?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        paper.topic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        paper.conference?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply range filter
+    if (rangeFrom || rangeTo) {
+      filtered = filtered.filter(paper => {
+        const score = paper.score || 0;
+        const from = rangeFrom ? parseFloat(rangeFrom) : -Infinity;
+        const to = rangeTo ? parseFloat(rangeTo) : Infinity;
+        return score >= from && score <= to;
+      });
+    }
+
+    // Sort by score
+    filtered.sort((a, b) => {
+      if (sortOrder === 'highest') {
+        return (b.score || 0) - (a.score || 0);
+      } else {
+        return (a.score || 0) - (b.score || 0);
+      }
+    });
+
+    // Apply limit
+    if (resultLimit && parseInt(resultLimit) > 0) {
+      filtered = filtered.slice(0, parseInt(resultLimit));
+    }
+
+    return filtered;
+  };
+
+  const filteredPapers = getFilteredPapers();
+
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
       {/* Analytics Section */}
@@ -37,7 +85,7 @@ function Home() {
           {/* Search Bar */}
           <div className='flex-1 relative'>
             <input
-            autoFocus
+              autoFocus
               type='text'
               placeholder='Search by title, author, topic, or conference...'
               value={searchQuery}
@@ -81,37 +129,72 @@ function Home() {
           </button>
         </div>
 
-        {/* Filter Panel (optional - shows when filter button is clicked) */}
+        {/* Filter Panel */}
         {showFilters && (
           <div className='mt-4 p-4 bg-gray-50 border-2 border-gray-300 rounded-lg'>
-            <h3 className='font-semibold text-gray-800 mb-3'>Filter Options</h3>
-            <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
-              <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Topic</label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
-                  <option value=''>All Topics</option>
-                  <option value='ml'>Machine Learning</option>
-                  <option value='ai'>Artificial Intelligence</option>
-                  <option value='cv'>Computer Vision</option>
+            <div className='flex justify-between items-center mb-4'>
+              <h3 className='font-semibold text-gray-800'>Filter Options</h3>
+              <button
+                onClick={() => {
+                  setSortOrder('highest');
+                  setResultLimit('');
+                  setRangeFrom('');
+                  setRangeTo('');
+                }}
+                className='px-3 py-1 text-sm text-blue-900 hover:text-white hover:bg-blue-900 border border-blue-900 rounded-lg transition-colors'
+              >
+                Clear Filters
+              </button>
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+              {/* Sort by Score */}
+              <div className='flex flex-col gap-2'>
+                <label className='text-sm font-medium text-gray-700'>Sort by Score</label>
+                <select 
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className='px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'
+                >
+                  <option value='highest'>Highest Score </option>
+                  <option value='lowest'>Lowest Score </option>
                 </select>
               </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Year</label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
-                  <option value=''>All Years</option>
-                  <option value='2024'>2024</option>
-                  <option value='2023'>2023</option>
-                  <option value='2022'>2022</option>
-                </select>
+
+              {/* Limit Results */}
+              <div className='flex flex-col gap-2'>
+                <label className='text-sm font-medium text-gray-700'>Limit Results</label>
+                <input
+                  type='number'
+                  placeholder='Enter number of results'
+                  value={resultLimit}
+                  onChange={(e) => setResultLimit(e.target.value)}
+                  min='1'
+                  className='px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'
+                />
               </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Conference</label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
-                  <option value=''>All Conferences</option>
-                  <option value='neurips'>NeurIPS</option>
-                  <option value='icml'>ICML</option>
-                  <option value='cvpr'>CVPR</option>
-                </select>
+
+              {/* Range Between */}
+              <div className='flex flex-col gap-2'>
+                <label className='text-sm font-medium text-gray-700'>Range Between</label>
+                <div className='flex items-center gap-2'>
+                  <input
+                    type='number'
+                    placeholder='From'
+                    value={rangeFrom}
+                    onChange={(e) => setRangeFrom(e.target.value)}
+                    step='0.1'
+                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'
+                  />
+                  <span className='text-gray-500 font-medium'>to</span>
+                  <input
+                    type='number'
+                    placeholder='To'
+                    value={rangeTo}
+                    onChange={(e) => setRangeTo(e.target.value)}
+                    step='0.1'
+                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -119,10 +202,10 @@ function Home() {
       </div>
 
       <div className='space-y-4 px-6 mt-6'>
-        {
-          acceptedPapers.map((paper) => (
-
+        {filteredPapers.length > 0 ? (
+          filteredPapers.map((paper, index) => (
             <ResearchCard
+              key={index}
               title={paper.title} 
               titleUrl={paper.pdfUrl}
               authors={paper.authors}
@@ -137,11 +220,14 @@ function Home() {
               RevisionCount={paper.RevisionCount}
             />
           ))
-        }
+        ) : (
+          <div className='text-center py-10 text-gray-500'>
+            No papers found matching your criteria.
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
 export default Home;
-

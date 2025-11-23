@@ -1,25 +1,27 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import AuthorCard from '../components/AuthorCard';
+import axios from '../api/axios.config';
+
 
 export default function Authors() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [authorsInfo, setAuthorsInfo] = useState([]);
-    
-    useEffect(() => {
-          const getAuthorsInfo = async () => {
-            try{
-              console.log("Fetching Authors Info ...");
-              const response = await axios.get('');
-              setAuthorsInfo(response.data.data);
-              console.log(AuthorsInfo);
-            }catch(error){
-              console.error("Error fetching authors info:", error);
-            }
-          }
-          getAuthorsInfo();
-        }, []);
+
+  useEffect(() => {
+    const getAuthorsInfo = async () => {
+      try {
+        console.log("Fetching Authors Info ...");
+        const response = await axios.get('/author/getAllAuthors');
+        setAuthorsInfo(response.data.data);
+        console.log(authorsInfo);
+      } catch (error) {
+        console.error("Error fetching authors info:", error);
+      }
+    }
+    getAuthorsInfo();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
@@ -99,22 +101,19 @@ export default function Authors() {
         )}
 
         {/* Authors Grid */}
-        <div className='space-y-4 px-6 mt-6'>
-        {
-          authorsInfo.map((author) => (
+      <div className='space-y-4 px-6 mt-6'>
+          {authorsInfo.map((author) => {
+            const normalizedAuthor = {
+              name: author.fullName || author.userName,
+              authorNumber: author.userName || author._id,   // choose what you want
+              email: author.email,
+              papersPublished: author.PublishedPapers ?? 0,
+              activePapers: author.ActivePapers ?? 0,
+            };
 
-            <AuthorCard
-              name={author.name} 
-              authorNumber={author.authorNumber}
-              email={author.email}
-              phone={author.phone}
-              university={author.university}
-              branch={author.branch}
-              papersPublished={author.papersPublished}
-            />
-          ))
-        }
-      </div>
+            return <AuthorCard key={author._id} author={normalizedAuthor} />;
+          })}
+        </div>
       </div>
     </div>
   );

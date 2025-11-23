@@ -1,30 +1,31 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import ReviewerInfoCard from "../components/ReviewerInfoCard";
+import axios from '../api/axios.config';
 
 export default function Reviewers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [reviewersInfo, setReviewersInfo] = useState([]);
-    
-    useEffect(() => {
-          const getReviewersInfo = async () => {
-            try{
-              console.log("Fetching Reviewers Info ...");
-              const response = await axios.get('');
-              setReviewersInfo(response.data.data);
-              console.log(ReviewersInfo);
-            }catch(error){
-              console.error("Error fetching authors info:", error);
-            }
-          }
-          getReviewersInfo();
-        }, []);
+
+  useEffect(() => {
+    const getReviewersInfo = async () => {
+      try {
+        console.log("Fetching Reviewers Info...");
+        const response = await axios.get('/reviewer/getAllReviewers');
+        setReviewersInfo(response.data.data);
+        console.log(reviewersInfo);
+      } catch (error) {
+        console.error("Error fetching authors info:", error);
+      }
+    }
+    getReviewersInfo();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
       <div className="max-w-7xl mx-auto">
-       
+
 
         {/* Search and Filter Bar */}
         <div className="mb-8 flex flex-col sm:flex-row gap-3">
@@ -99,21 +100,23 @@ export default function Reviewers() {
         )}
 
         {/* Reviewers Grid */}
-        <div className="space-y-6">
-         {
-          reviewersInfo.map((reviewer) => (
 
-            <ResearchCard
-              name={reviewer.name} 
-              reviewerNumber={reviewer.reviewerNumber}
-              phone={reviewer.phone}
-              email={reviewer.email}
-              averageScore={reviewer.averageScore}
-              papersReviewed={reviewer.papersReviewed}
-              qualification={reviewer.qualification}
-            />
-          ))
-        }
+        <div className="space-y-6">
+          {
+            reviewersInfo.map((reviewer) => {
+              const normalizedReviewer = {
+                name: reviewer.reviewerName,
+                reviewerNumber: reviewer._id.toString().slice(-6), // last 6 digits of ID
+                phone: reviewer.phoneNumber,
+                email: reviewer.email,
+                qualification: reviewer.qualification,
+                papersReviewed: reviewer.totalPapers,
+                averageScore: reviewer.averageScore ?? 0,  // handle null
+              };
+
+              return <ReviewerInfoCard key={reviewer._id} reviewer={normalizedReviewer} />;
+            })
+          }
         </div>
       </div>
     </div>

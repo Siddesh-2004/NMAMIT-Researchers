@@ -9,7 +9,8 @@ export default function AuthorCard({ author }) {
     phone: "+91 98765 43210",
     university: "ABC University",
     branch: "Computer Science",
-    papersPublished: 8
+    papersPublished: 8,
+    activePapers: 3
   };
   
   const authorData = author || defaultAuthor;
@@ -109,6 +110,22 @@ export default function AuthorCard({ author }) {
               style={{ color: '#001F3F' }}
             >
               {authorData.papersPublished}
+            </span>
+          </div>
+
+          {/* Active Papers */}
+          <div className="flex flex-col">
+            <span
+              className="font-semibold text-sm md:text-base mb-1"
+              style={{ color: '#001F3F' }}
+            >
+              Active Papers
+            </span>
+            <span
+              className="text-2xl md:text-3xl font-bold"
+              style={{ color: '#001F3F' }}
+            >
+              {authorData.activePapers}
             </span>
           </div>
         </div>
