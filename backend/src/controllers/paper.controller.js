@@ -5,6 +5,7 @@ import ApiResponse from "../utils/apiResponse.js";
 import PaperModel from "../models/paper.model.js";
 import ReviewerModel from "../models/reviewer.model.js";
 import TopicModel from "../models/topic.model.js";
+import UserModel from "../models/user.model.js";
 const addPaper = asyncHandler(async (req, res) => {
   const { title, abstract, keywords, authors ,topic} = req.body;
   if (!title || !abstract || !keywords || !authors || !topic) {
@@ -41,6 +42,8 @@ const addPaper = asyncHandler(async (req, res) => {
   if (!newPaper) {
     throw new ApiError(500, "Failed to create paper");
   }
+  
+
   const topicData=await TopicModel.findOne({topicName:topic});
   if(!topicData){
     await TopicModel.create({topicName:topic});

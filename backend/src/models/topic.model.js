@@ -7,7 +7,7 @@ const TopicSchema = new mongoose.Schema({
   },
   paperCount: {
     type: Number,
-    default : 0,
+    default : 1,
   },
 });
 
