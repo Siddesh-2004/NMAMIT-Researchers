@@ -1,6 +1,8 @@
 import React, { useState, useEffect} from 'react';
 import { Search, Filter } from 'lucide-react';
 import AuthorCard from '../components/AuthorCard';
+import axios from '../api/axios.config';
+
 
 export default function Authors() {
   const [searchQuery, setSearchQuery] = useState('');
