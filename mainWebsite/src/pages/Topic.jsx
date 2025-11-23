@@ -7,6 +7,8 @@ function Topic() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [AllTopics, setAllTopics] = useState([]);
+  const [sortBySubmissions, setSortBySubmissions] = useState('');
+  const [limit, setLimit] = useState('');
 
   useEffect(() => {
     const getAllTopics = async () => {
@@ -21,6 +23,44 @@ function Topic() {
     }
     getAllTopics();
   }, []);
+
+  // Filter and sort topics
+  const filteredAndSortedTopics = () => {
+    let result = [...AllTopics];
+
+    // Apply search filter
+    if (searchQuery) {
+      result = result.filter((topic) => {
+        const topicName = topic.topicName?.toLowerCase() || '';
+        const query = searchQuery.toLowerCase();
+        return topicName.includes(query);
+      });
+    }
+
+    // Apply sorting by total submissions
+    if (sortBySubmissions) {
+      result.sort((a, b) => {
+        const aValue = a.paperCount ?? 0;
+        const bValue = b.paperCount ?? 0;
+
+        if (sortBySubmissions === 'highest') {
+          return bValue - aValue; // Highest to Lowest
+        } else if (sortBySubmissions === 'lowest') {
+          return aValue - bValue; // Lowest to Highest
+        }
+        return 0;
+      });
+    }
+
+    // Apply limit
+    if (limit && parseInt(limit) > 0) {
+      result = result.slice(0, parseInt(limit));
+    }
+
+    return result;
+  };
+
+  const displayedTopics = filteredAndSortedTopics();
 
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
@@ -77,41 +117,41 @@ function Topic() {
         {showFilters && (
           <div className='mt-4 p-4 bg-gray-50 border-2 border-gray-300 rounded-lg'>
             <h3 className='font-semibold text-gray-800 mb-3'>Filter Options</h3>
-            <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Topic</label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
-                  <option value=''>All Topics</option>
-                  <option value='ml'>Machine Learning</option>
-                  <option value='ai'>Artificial Intelligence</option>
-                  <option value='cv'>Computer Vision</option>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Sort By Total Submissions
+                </label>
+                <select 
+                  value={sortBySubmissions}
+                  onChange={(e) => setSortBySubmissions(e.target.value)}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'
+                >
+                  <option value=''>None</option>
+                  <option value='highest'>Highest </option>
+                  <option value='lowest'>Lowest </option>
                 </select>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Year</label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
-                  <option value=''>All Years</option>
-                  <option value='2024'>2024</option>
-                  <option value='2023'>2023</option>
-                  <option value='2022'>2022</option>
-                </select>
-              </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Conference</label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'>
-                  <option value=''>All Conferences</option>
-                  <option value='neurips'>NeurIPS</option>
-                  <option value='icml'>ICML</option>
-                  <option value='cvpr'>CVPR</option>
-                </select>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Limit
+                </label>
+                <input
+                  type='number'
+                  value={limit}
+                  onChange={(e) => setLimit(e.target.value)}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600'
+                  placeholder='Enter number of topics to display'
+                  min='1'
+                />
               </div>
             </div>
           </div>
         )}
         <div className='m-4 space-y-4  flex flex-col justify-center items-center'>
 
-          {AllTopics.length > 0 ? (
-            AllTopics.map((topic) => (
+          {displayedTopics.length > 0 ? (
+            displayedTopics.map((topic) => (
               <TopicCard
                 key={topic._id}
                 topicName={topic.topicName}

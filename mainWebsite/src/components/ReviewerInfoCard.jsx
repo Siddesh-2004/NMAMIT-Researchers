@@ -96,9 +96,9 @@ export default function ReviewerInfoCard({ reviewer }) {
                 className="text-2xl md:text-3xl font-bold"
                 style={{ color: '#001F3F' }}
               >
-                {reviewerData.averageScore}
+                {reviewerData.averageScore.toFixed(1)}
               </span>
-              <span className="text-gray-500 text-sm ml-1">/5.0</span>
+              <span className="text-gray-500 text-sm ml-1">/10</span>
             </div>
           </div>
 
