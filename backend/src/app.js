@@ -45,6 +45,10 @@ app.use("/api/v1/paper",paperRoute);
 import topicRoute from "./routes/topic.route.js";
 app.use("/api/v1/topic",topicRoute);
 
+////import author routes
+import authorRoute from "./routes/author.route.js";
+app.use("/api/v1/author",authorRoute);
+
 
 
 
