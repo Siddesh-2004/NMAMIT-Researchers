@@ -1,9 +1,27 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import TopicCard from '../components/TopicCard';
+import axios from "../api/axios.config";
+
 function Topic() {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [AllTopics, setAllTopics] = useState([]);
+
+  useEffect(() => {
+    const getAllTopics = async () => {
+      try {
+        console.log("Fetching Topics Info ...");
+        const response = await axios.get('/topic/getAllTopics');
+        setAllTopics(response.data.data);
+        console.log(AllTopics);
+      } catch (error) {
+        console.error("Error fetching topics info:", error);
+      }
+    }
+    getAllTopics();
+  }, []);
+
   return (
     <div className='lg:ml-64 pt-16 lg:pt-0 '>
       <div className='px-6 mt-6'>
@@ -11,24 +29,24 @@ function Topic() {
           {/* Search Bar */}
           <div className='flex-1 relative'>
             <input
-            autoFocus
+              autoFocus
               type='text'
               placeholder='Search by title, author, topic, or conference...'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className='w-full px-4 py-3 pl-10 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 transition-colors'
             />
-            <svg 
+            <svg
               className='absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400'
-              fill='none' 
-              stroke='currentColor' 
+              fill='none'
+              stroke='currentColor'
               viewBox='0 0 24 24'
             >
-              <path 
-                strokeLinecap='round' 
-                strokeLinejoin='round' 
-                strokeWidth={2} 
-                d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' 
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
               />
             </svg>
           </div>
@@ -38,17 +56,17 @@ function Topic() {
             onClick={() => setShowFilters(!showFilters)}
             className='px-6 py-3 lg:bg-gradient-to-b lg:from-slate-900 lg:to-slate-800 lg:shadow-2xl lg:z-40 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 whitespace-nowrap'
           >
-            <svg 
-              className='w-5 h-5' 
-              fill='none' 
-              stroke='currentColor' 
+            <svg
+              className='w-5 h-5'
+              fill='none'
+              stroke='currentColor'
               viewBox='0 0 24 24'
             >
-              <path 
-                strokeLinecap='round' 
-                strokeLinejoin='round' 
-                strokeWidth={2} 
-                d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z' 
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z'
               />
             </svg>
             Filters
@@ -92,12 +110,25 @@ function Topic() {
         )}
         <div className='m-4 space-y-4  flex flex-col justify-center items-center'>
 
-        <TopicCard/>
-        <TopicCard/>
-        <TopicCard/>
+          {AllTopics.length > 0 ? (
+            AllTopics.map((topic) => (
+              <TopicCard
+                key={topic._id}
+                topicName={topic.topicName}
+                totalSubmissions={topic.paperCount}
+                acceptanceRate={
+                  topic.AcceptanceRate > 0
+                    ? `${topic.AcceptanceRate.toFixed(1)}%`
+                    : "0%"
+                }
+              />
+            ))
+          ) : (
+            <p className="text-gray-500">No topics available</p>
+          )}
         </div>
       </div>
-      
+
     </div>
   )
 }
