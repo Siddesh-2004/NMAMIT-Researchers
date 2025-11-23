@@ -8,7 +8,6 @@ export default function AuthorCard({ author }) {
     email: "riya.sharma@univ.edu",
     phone: "+91 98765 43210",
     university: "ABC University",
-    branch: "Computer Science",
     papersPublished: 8,
     activePapers: 3
   };
@@ -50,45 +49,6 @@ export default function AuthorCard({ author }) {
           </span>
           <span className="text-gray-700 text-sm md:text-base break-all">
             {authorData.email}
-          </span>
-        </div>
-
-        {/* Phone Number */}
-        <div className="flex flex-col sm:flex-row sm:items-center">
-          <span
-            className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
-            style={{ color: '#001F3F' }}
-          >
-            Phone Number:
-          </span>
-          <span className="text-gray-700 text-sm md:text-base">
-            {authorData.phone}
-          </span>
-        </div>
-
-        {/* University */}
-        <div className="flex flex-col sm:flex-row sm:items-center">
-          <span
-            className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
-            style={{ color: '#001F3F' }}
-          >
-            University:
-          </span>
-          <span className="text-gray-700 text-sm md:text-base">
-            {authorData.university}
-          </span>
-        </div>
-
-        {/* Branch/Department */}
-        <div className="flex flex-col sm:flex-row sm:items-center">
-          <span
-            className="font-semibold text-sm md:text-base w-full sm:w-48 mb-1 sm:mb-0"
-            style={{ color: '#001F3F' }}
-          >
-            Branch/Department:
-          </span>
-          <span className="text-gray-700 text-sm md:text-base">
-            {authorData.branch}
           </span>
         </div>
 

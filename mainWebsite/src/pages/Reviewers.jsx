@@ -7,6 +7,9 @@ export default function Reviewers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [reviewersInfo, setReviewersInfo] = useState([]);
+  const [orderBy, setOrderBy] = useState('');
+  const [sortByScore, setSortByScore] = useState('');
+  const [limit, setLimit] = useState('');
 
   useEffect(() => {
     const getReviewersInfo = async () => {
@@ -21,6 +24,62 @@ export default function Reviewers() {
     }
     getReviewersInfo();
   }, []);
+
+  // Filter and sort reviewers
+  const filteredAndSortedReviewers = () => {
+    let result = [...reviewersInfo];
+
+    // Apply search filter
+    if (searchQuery) {
+      result = result.filter((reviewer) => {
+        const name = reviewer.reviewerName?.toLowerCase() || '';
+        const email = reviewer.email?.toLowerCase() || '';
+        const qualification = reviewer.qualification?.toLowerCase() || '';
+        const query = searchQuery.toLowerCase();
+
+        return name.includes(query) || email.includes(query) || qualification.includes(query);
+      });
+    }
+
+    // Apply ordering by papers reviewed
+    if (orderBy) {
+      result.sort((a, b) => {
+        const aValue = a.totalPapers ?? 0;
+        const bValue = b.totalPapers ?? 0;
+
+        if (orderBy === 'highest') {
+          return bValue - aValue; // Descending
+        } else if (orderBy === 'lowest') {
+          return aValue - bValue; // Ascending
+        }
+        return 0;
+      });
+    }
+
+    // Apply ordering by average score
+    if (sortByScore) {
+      result.sort((a, b) => {
+        const aValue = a.averageScore ?? 0;
+        const bValue = b.averageScore ?? 0;
+
+        if (sortByScore === 'descending') {
+          return bValue - aValue; // Highest to Lowest
+        } else if (sortByScore === 'ascending') {
+          return aValue - bValue; // Lowest to Highest
+        }
+        return 0;
+      });
+    }
+
+    // Apply limit
+    if (limit && parseInt(limit) > 0) {
+      result = result.slice(0, parseInt(limit));
+    }
+
+    return result;
+  };
+
+  const displayedReviewers = filteredAndSortedReviewers();
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:ml-64 pt-16 lg:pt-10">
@@ -66,34 +125,44 @@ export default function Reviewers() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Min Papers Reviewed
+                  Order By Papers Reviewed
                 </label>
-                <input
-                  type="number"
+                <select 
+                  value={orderBy}
+                  onChange={(e) => setOrderBy(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., 10"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Min Average Score
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., 4.0"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Qualification
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">All</option>
-                  <option value="phd">Ph.D.</option>
-                  <option value="masters">Master's</option>
+                >
+                  <option value="">None</option>
+                  <option value="highest">Highest to Lowest</option>
+                  <option value="lowest">Lowest to Highest</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sort By Average Score
+                </label>
+                <select 
+                  value={sortByScore}
+                  onChange={(e) => setSortByScore(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">None</option>
+                  <option value="descending">Highest </option>
+                  <option value="ascending">Lowest </option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Limit
+                </label>
+                <input
+                  type="number"
+                  value={limit}
+                  onChange={(e) => setLimit(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter number of reviewers to display"
+                  min="1"
+                />
               </div>
             </div>
           </div>
@@ -103,7 +172,7 @@ export default function Reviewers() {
 
         <div className="space-y-6">
           {
-            reviewersInfo.map((reviewer) => {
+            displayedReviewers.map((reviewer) => {
               const normalizedReviewer = {
                 name: reviewer.reviewerName,
                 reviewerNumber: reviewer._id.toString().slice(-6), // last 6 digits of ID
