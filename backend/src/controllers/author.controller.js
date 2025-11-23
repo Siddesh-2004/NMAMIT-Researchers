@@ -44,16 +44,6 @@ const getAllAuthors = asyncHandler(async (req, res) => {
         },
         { 
             $sort: { PublishedPapers: -1 }
-        },
-        {
-            $project: {
-                _id: 1,  // Include author ID
-                userName: 1,  // Include username
-                fullName: 1,  // Include full name
-                email: 1,  // Include email (optional)
-                PublishedPapers: 1,  // Include PublishedPapers count
-                ActivePapers: 1,  // Include ActivePapers count
-            }
         }
     ]);
 
